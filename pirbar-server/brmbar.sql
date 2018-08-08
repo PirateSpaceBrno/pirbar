@@ -2,8 +2,8 @@
 -- version 4.6.6deb4
 -- https://www.phpmyadmin.net/
 --
--- PoÄŤĂ­taÄŤ: localhost
--- VytvoĹ™eno: StĹ™ 08. srp 2018, 16:42
+-- Počítač: localhost
+-- Vytvořeno: Stř 08. srp 2018, 16:42
 -- Verze serveru: 5.7.23
 -- Verze PHP: 7.0.30-0+deb9u1
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- DatabĂˇze: `brmbar`
+-- Databáze: `brmbar`
 --
 
 -- --------------------------------------------------------
@@ -37,7 +37,7 @@ CREATE TABLE `accounts` (
 -- --------------------------------------------------------
 
 --
--- ZĂˇstupnĂˇ struktura pro pohled `accounts_balances`
+-- Zástupná struktura pro pohled `accounts_balances`
 -- (See below for the actual view)
 --
 CREATE TABLE `accounts_balances` (
@@ -73,7 +73,7 @@ CREATE TABLE `currencies` (
 -- --------------------------------------------------------
 
 --
--- ZĂˇstupnĂˇ struktura pro pohled `currencies_view`
+-- Zástupná struktura pro pohled `currencies_view`
 -- (See below for the actual view)
 --
 CREATE TABLE `currencies_view` (
@@ -141,11 +141,11 @@ DROP TABLE IF EXISTS `currencies_view`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `currencies_view`  AS  select `c`.`id` AS `id`,`c`.`name` AS `name`,`c`.`shortname` AS `shortname`,`d`.`valid_since` AS `valid_since`,`d`.`rate` AS `rate` from (`currencies` `c` join (select `t`.`currency` AS `currency`,`t`.`valid_since` AS `valid_since`,`t`.`rate` AS `rate` from `exchange_rates` `t` where (`t`.`valid_since` = (select max(`exchange_rates`.`valid_since`) from `exchange_rates` where (`exchange_rates`.`currency` = `t`.`currency`))) group by `t`.`currency`) `d` on((`d`.`currency` = `c`.`id`))) ;
 
 --
--- KlĂ­ÄŤe pro exportovanĂ© tabulky
+-- Klíče pro exportované tabulky
 --
 
 --
--- KlĂ­ÄŤe proÂ tabulku `accounts`
+-- Klíče pro tabulku `accounts`
 --
 ALTER TABLE `accounts`
   ADD PRIMARY KEY (`id`),
@@ -153,7 +153,7 @@ ALTER TABLE `accounts`
   ADD KEY `fk_currency_account` (`currency`);
 
 --
--- KlĂ­ÄŤe proÂ tabulku `authentications`
+-- Klíče pro tabulku `authentications`
 --
 ALTER TABLE `authentications`
   ADD PRIMARY KEY (`id`),
@@ -162,27 +162,27 @@ ALTER TABLE `authentications`
   ADD KEY `fk_account_auth` (`account`);
 
 --
--- KlĂ­ÄŤe proÂ tabulku `currencies`
+-- Klíče pro tabulku `currencies`
 --
 ALTER TABLE `currencies`
   ADD PRIMARY KEY (`id`);
 
 --
--- KlĂ­ÄŤe proÂ tabulku `exchange_rates`
+-- Klíče pro tabulku `exchange_rates`
 --
 ALTER TABLE `exchange_rates`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_currency` (`currency`);
 
 --
--- KlĂ­ÄŤe proÂ tabulku `identities`
+-- Klíče pro tabulku `identities`
 --
 ALTER TABLE `identities`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
 
 --
--- KlĂ­ÄŤe proÂ tabulku `transactions`
+-- Klíče pro tabulku `transactions`
 --
 ALTER TABLE `transactions`
   ADD PRIMARY KEY (`id`),
@@ -224,31 +224,31 @@ ALTER TABLE `identities`
 ALTER TABLE `transactions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- OmezenĂ­ pro exportovanĂ© tabulky
+-- Omezení pro exportované tabulky
 --
 
 --
--- OmezenĂ­ pro tabulku `accounts`
+-- Omezení pro tabulku `accounts`
 --
 ALTER TABLE `accounts`
   ADD CONSTRAINT `fk_currency_account` FOREIGN KEY (`currency`) REFERENCES `currencies` (`id`),
   ADD CONSTRAINT `fk_identity` FOREIGN KEY (`identity`) REFERENCES `identities` (`id`);
 
 --
--- OmezenĂ­ pro tabulku `authentications`
+-- Omezení pro tabulku `authentications`
 --
 ALTER TABLE `authentications`
   ADD CONSTRAINT `fk_account_auth` FOREIGN KEY (`account`) REFERENCES `accounts` (`id`),
   ADD CONSTRAINT `fk_identity_auth` FOREIGN KEY (`identity`) REFERENCES `identities` (`id`);
 
 --
--- OmezenĂ­ pro tabulku `exchange_rates`
+-- Omezení pro tabulku `exchange_rates`
 --
 ALTER TABLE `exchange_rates`
   ADD CONSTRAINT `fk_currency` FOREIGN KEY (`currency`) REFERENCES `currencies` (`id`);
 
 --
--- OmezenĂ­ pro tabulku `transactions`
+-- Omezení pro tabulku `transactions`
 --
 ALTER TABLE `transactions`
   ADD CONSTRAINT `fk_source_account` FOREIGN KEY (`source_account`) REFERENCES `accounts` (`id`),
