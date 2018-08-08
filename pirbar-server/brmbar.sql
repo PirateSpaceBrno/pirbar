@@ -2,8 +2,8 @@
 -- version 4.6.6deb4
 -- https://www.phpmyadmin.net/
 --
--- Počítač: localhost
--- Vytvořeno: Stř 08. srp 2018, 01:29
+-- PoÄŤĂ­taÄŤ: localhost
+-- VytvoĹ™eno: StĹ™ 08. srp 2018, 16:42
 -- Verze serveru: 5.7.23
 -- Verze PHP: 7.0.30-0+deb9u1
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Databáze: `brmbar`
+-- DatabĂˇze: `brmbar`
 --
 
 -- --------------------------------------------------------
@@ -29,13 +29,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `accounts` (
   `id` int(11) NOT NULL,
   `identity` int(11) NOT NULL,
-  `currency` int(11) NOT NULL
+  `currency` int(11) NOT NULL,
+  `transparent` tinyint(1) NOT NULL DEFAULT '0',
+  `description` varchar(160) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Zástupná struktura pro pohled `accounts_balances`
+-- ZĂˇstupnĂˇ struktura pro pohled `accounts_balances`
 -- (See below for the actual view)
 --
 CREATE TABLE `accounts_balances` (
@@ -52,7 +54,8 @@ CREATE TABLE `accounts_balances` (
 CREATE TABLE `authentications` (
   `id` int(11) NOT NULL,
   `identity` int(11) NOT NULL,
-  `content` text NOT NULL
+  `account` int(11) DEFAULT NULL,
+  `content` varchar(100) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -63,14 +66,14 @@ CREATE TABLE `authentications` (
 
 CREATE TABLE `currencies` (
   `id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `shortname` varchar(3) DEFAULT NULL
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+  `shortname` varchar(3) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- Zástupná struktura pro pohled `currencies_view`
+-- ZĂˇstupnĂˇ struktura pro pohled `currencies_view`
 -- (See below for the actual view)
 --
 CREATE TABLE `currencies_view` (
@@ -102,7 +105,7 @@ CREATE TABLE `exchange_rates` (
 
 CREATE TABLE `identities` (
   `id` int(11) NOT NULL,
-  `name` varchar(60) NOT NULL
+  `name` varchar(60) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -138,11 +141,11 @@ DROP TABLE IF EXISTS `currencies_view`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `currencies_view`  AS  select `c`.`id` AS `id`,`c`.`name` AS `name`,`c`.`shortname` AS `shortname`,`d`.`valid_since` AS `valid_since`,`d`.`rate` AS `rate` from (`currencies` `c` join (select `t`.`currency` AS `currency`,`t`.`valid_since` AS `valid_since`,`t`.`rate` AS `rate` from `exchange_rates` `t` where (`t`.`valid_since` = (select max(`exchange_rates`.`valid_since`) from `exchange_rates` where (`exchange_rates`.`currency` = `t`.`currency`))) group by `t`.`currency`) `d` on((`d`.`currency` = `c`.`id`))) ;
 
 --
--- Klíče pro exportované tabulky
+-- KlĂ­ÄŤe pro exportovanĂ© tabulky
 --
 
 --
--- Klíče pro tabulku `accounts`
+-- KlĂ­ÄŤe proÂ tabulku `accounts`
 --
 ALTER TABLE `accounts`
   ADD PRIMARY KEY (`id`),
@@ -150,33 +153,36 @@ ALTER TABLE `accounts`
   ADD KEY `fk_currency_account` (`currency`);
 
 --
--- Klíče pro tabulku `authentications`
+-- KlĂ­ÄŤe proÂ tabulku `authentications`
 --
 ALTER TABLE `authentications`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_identity_auth` (`identity`);
+  ADD UNIQUE KEY `content` (`content`),
+  ADD KEY `fk_identity_auth` (`identity`),
+  ADD KEY `fk_account_auth` (`account`);
 
 --
--- Klíče pro tabulku `currencies`
+-- KlĂ­ÄŤe proÂ tabulku `currencies`
 --
 ALTER TABLE `currencies`
   ADD PRIMARY KEY (`id`);
 
 --
--- Klíče pro tabulku `exchange_rates`
+-- KlĂ­ÄŤe proÂ tabulku `exchange_rates`
 --
 ALTER TABLE `exchange_rates`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_currency` (`currency`);
 
 --
--- Klíče pro tabulku `identities`
+-- KlĂ­ÄŤe proÂ tabulku `identities`
 --
 ALTER TABLE `identities`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
--- Klíče pro tabulku `transactions`
+-- KlĂ­ÄŤe proÂ tabulku `transactions`
 --
 ALTER TABLE `transactions`
   ADD PRIMARY KEY (`id`),
@@ -191,7 +197,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT pro tabulku `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT pro tabulku `authentications`
 --
@@ -218,30 +224,31 @@ ALTER TABLE `identities`
 ALTER TABLE `transactions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- Omezení pro exportované tabulky
+-- OmezenĂ­ pro exportovanĂ© tabulky
 --
 
 --
--- Omezení pro tabulku `accounts`
+-- OmezenĂ­ pro tabulku `accounts`
 --
 ALTER TABLE `accounts`
   ADD CONSTRAINT `fk_currency_account` FOREIGN KEY (`currency`) REFERENCES `currencies` (`id`),
   ADD CONSTRAINT `fk_identity` FOREIGN KEY (`identity`) REFERENCES `identities` (`id`);
 
 --
--- Omezení pro tabulku `authentications`
+-- OmezenĂ­ pro tabulku `authentications`
 --
 ALTER TABLE `authentications`
+  ADD CONSTRAINT `fk_account_auth` FOREIGN KEY (`account`) REFERENCES `accounts` (`id`),
   ADD CONSTRAINT `fk_identity_auth` FOREIGN KEY (`identity`) REFERENCES `identities` (`id`);
 
 --
--- Omezení pro tabulku `exchange_rates`
+-- OmezenĂ­ pro tabulku `exchange_rates`
 --
 ALTER TABLE `exchange_rates`
   ADD CONSTRAINT `fk_currency` FOREIGN KEY (`currency`) REFERENCES `currencies` (`id`);
 
 --
--- Omezení pro tabulku `transactions`
+-- OmezenĂ­ pro tabulku `transactions`
 --
 ALTER TABLE `transactions`
   ADD CONSTRAINT `fk_source_account` FOREIGN KEY (`source_account`) REFERENCES `accounts` (`id`),
