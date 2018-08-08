@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using JamesWright.SimpleHttp;
 using Newtonsoft.Json;
 using PirBar.Server.Controllers;
+using log4net;
 
 namespace PirBar.Server
 {
@@ -16,7 +17,7 @@ namespace PirBar.Server
         {
             // Read config.json and initialize variables
             var config = new PirBarConfig();
-            var log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            var log = LogManager.GetLogger("pirbar-server");
 
 
             App app = new App();
