@@ -1,0 +1,3 @@
+[submodule "3rd-party/simple-http"]
+	path = 3rd-party/simple-http
+	url = https://github.com/PirateSpaceBrno/simple-http.git
