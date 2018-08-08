@@ -1,0 +1,24 @@
+Dependencies:
+- MySQL 5.8+
+  - disable only_full_group_by
+  mysql> set global sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+  mysql> set session sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO, NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+
+
+currencies_view:
+SELECT c.id, c.name, c.shortname, d.valid_since, d.rate FROM currencies c
+INNER JOIN (
+	SELECT t.currency, t.valid_since, t.rate FROM exchange_rates t
+    WHERE valid_since = (
+        SELECT MAX(valid_since) FROM exchange_rates WHERE currency = t.currency
+    )
+    GROUP BY t.currency 
+) d ON d.currency = c.id
+
+
+accounts_balances:
+SELECT a.target_account as account, (SUM(a.amount) - b.amount) as balance FROM transactions a
+INNER JOIN (
+    SELECT SUM(amount), source_account FROM transactions GROUP BY source_account
+) AS b ON b.source_account = a.target_account
+GROUP BY a.target_account

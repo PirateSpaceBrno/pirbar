@@ -1,0 +1,9 @@
+[
+  {
+    "listenGateway": "*",
+    "listenPort": 8080,
+    "instanceName": "PirBar",
+    "instanceDescription": "",
+
+  }
+]
