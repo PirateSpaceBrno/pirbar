@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 using System.IO;
 using MySql.Data.MySqlClient;
 using PirBanka.Server.Models;
-using log4net;
 
 namespace PirBanka.Server.Controllers
 {
     class Database : IDisposable
     {
         private MySqlConnection _conn;
-        private ILog log = LogManager.GetLogger("pirbanka.server.db");
 
         /// <summary>
         /// Creates new connection to MySQL database
@@ -59,7 +57,7 @@ namespace PirBanka.Server.Controllers
             }
             catch (Exception ex)
             {
-                log.Fatal($"{ex.Message} | {ex.StackTrace}");
+                //log.Fatal($"{ex.Message} | {ex.StackTrace}");
             }
         }
 
@@ -74,7 +72,7 @@ namespace PirBanka.Server.Controllers
             }
             catch (Exception ex)
             {
-                log.Fatal($"{ex.Message} | {ex.StackTrace}");
+                //log.Fatal($"{ex.Message} | {ex.StackTrace}");
             }
         }
 

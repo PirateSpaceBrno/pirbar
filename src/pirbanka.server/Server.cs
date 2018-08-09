@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 using JamesWright.SimpleHttp;
 using Newtonsoft.Json;
 using PirBanka.Server.Controllers;
-using log4net;
 
 namespace PirBanka.Server
 {
     class Server
     {
-        private ILog log = LogManager.GetLogger("pirbanka.server");
         private static PirBankaConfig config = new PirBankaConfig();
 
         static void Main()
