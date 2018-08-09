@@ -14,7 +14,7 @@ namespace PirBanka.Server
     class Server
     {
         private ILog log = LogManager.GetLogger("pirbanka.server");
-        private PirBankaConfig config = new PirBankaConfig();
+        private static PirBankaConfig config = new PirBankaConfig();
 
         static void Main()
         {
