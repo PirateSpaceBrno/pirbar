@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Počítač: localhost
--- Vytvořeno: Stř 08. srp 2018, 16:42
+-- Vytvořeno: Čtv 09. srp 2018, 21:24
 -- Verze serveru: 5.7.23
 -- Verze PHP: 7.0.30-0+deb9u1
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Databáze: `brmbar`
+-- Databáze: `pirbanka`
 --
 
 -- --------------------------------------------------------
@@ -30,7 +30,7 @@ CREATE TABLE `accounts` (
   `id` int(11) NOT NULL,
   `identity` int(11) NOT NULL,
   `currency` int(11) NOT NULL,
-  `transparent` tinyint(1) NOT NULL DEFAULT '0',
+  `market` tinyint(1) NOT NULL DEFAULT '0',
   `description` varchar(160) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -105,7 +105,8 @@ CREATE TABLE `exchange_rates` (
 
 CREATE TABLE `identities` (
   `id` int(11) NOT NULL,
-  `name` varchar(60) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
+  `name` varchar(30) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+  `display_name` varchar(80) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -179,7 +180,8 @@ ALTER TABLE `exchange_rates`
 --
 ALTER TABLE `identities`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `display_name` (`display_name`);
 
 --
 -- Klíče pro tabulku `transactions`

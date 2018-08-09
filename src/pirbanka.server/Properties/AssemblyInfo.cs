@@ -1,16 +1,16 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("pirbar-server")]
+[assembly: AssemblyTitle("PirBanka.Server")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("pirbar-server")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyProduct("PirBanka Server")]
+[assembly: AssemblyCopyright("GNU GPL v3 2018, Pirate Space Brno")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

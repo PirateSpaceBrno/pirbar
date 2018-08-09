@@ -1,9 +1,8 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pirbar-server", "pirbar-server\pirbar-server.csproj", "{675B0092-BE77-43CA-B4D7-B1EF29A32391}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PirBanka.Server", "pirbanka.server\PirBanka.Server.csproj", "{675B0092-BE77-43CA-B4D7-B1EF29A32391}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JamesWright.SimpleHttp", "..\3rd-party\simple-http\JamesWright.SimpleHttp\JamesWright.SimpleHttp.csproj", "{767685D8-27FC-4EFD-A29F-F79FD3688D91}"
 EndProject

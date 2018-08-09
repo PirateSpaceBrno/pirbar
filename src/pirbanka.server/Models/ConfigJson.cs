@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.ComponentModel;
 
-namespace PirBar.Server.Models
+namespace PirBanka.Server.Models
 {
-    internal class PirBarConfigJson
+    internal class ConfigJson
     {
         [DefaultValue("localhost")]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]

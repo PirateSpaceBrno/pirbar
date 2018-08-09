@@ -1,20 +1,20 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
-using PirBar.Server.Controllers;
+using PirBanka.Server.Controllers;
 using log4net;
 
-namespace PirBar.Server
+namespace PirBanka.Server
 {
     class Database
     {
-        private PirBarConfig config = new PirBarConfig();
+        private PirBankaConfig config = new PirBankaConfig();
         private MySqlConnection _conn;
-        private ILog log = LogManager.GetLogger("pirbar-server.database");
+        private ILog log = LogManager.GetLogger("pirbanka.server.db");
 
         /// <summary>
         /// Creates new connection to MySQL database

@@ -1,19 +1,19 @@
-﻿using Newtonsoft.Json;
-using PirBar.Server.Models;
+using Newtonsoft.Json;
+using PirBanka.Server.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PirBar.Server.Controllers
+namespace PirBanka.Server.Controllers
 {
-    public class PirBarConfig
+    public class PirBankaConfig
     {
-        private readonly PirBarConfigJson _config;
+        private readonly ConfigJson _config;
 
-        public PirBarConfig()
+        public PirBankaConfig()
         {
             var configJson = File.ReadAllText($"{Environment.CurrentDirectory}\\config.json");
-            _config = JsonConvert.DeserializeObject<List<PirBarConfigJson>>(configJson)[0];
+            _config = JsonConvert.DeserializeObject<List<ConfigJson>>(configJson)[0];
         }
 
         public string ListenGateway => _config.listenGateway;

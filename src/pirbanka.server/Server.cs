@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,21 +6,24 @@ using System.IO;
 using System.Threading.Tasks;
 using JamesWright.SimpleHttp;
 using Newtonsoft.Json;
-using PirBar.Server.Controllers;
+using PirBanka.Server.Controllers;
 using log4net;
 
-namespace PirBar.Server
+namespace PirBanka.Server
 {
     class Server
     {
+        private ILog log = LogManager.GetLogger("pirbanka.server");
+        private PirBankaConfig config = new PirBankaConfig();
+
         static void Main()
         {
-            // Read config.json and initialize variables
-            var config = new PirBarConfig();
-            var log = LogManager.GetLogger("pirbar-server");
+            // Check DB connection and state
+                // If not, close app (e.g. connections string does not exist, DB connection can't open, DB does not exist, etc.)
+            // Check DB is filled with tables and data
+                // If not, provide console wizard to fill it up
 
-
-            App app = new App();
+            SimpleHttpServer app = new SimpleHttpServer();
 
             app.Get("/", async (req, res) =>
             {
