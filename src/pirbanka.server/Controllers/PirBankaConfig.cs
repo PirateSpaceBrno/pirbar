@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using PirBanka.Server.Models;
-using PirBanka.Server.Controllers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,6 +31,19 @@ namespace PirBanka.Server.Controllers
         public string DatabaseName => _config.databaseName;
         public string DatabaseUser => _config.databaseUser;
         public string DatabasePassword => _config.databasePassword;
+        public MySqlConnectionString DbConnectionString {
+            get
+            {
+                return new MySqlConnectionString()
+                {
+                    dbName = DatabaseName,
+                    dbPassword = DatabasePassword,
+                    dbServerIp = DatabaseServer,
+                    dbServerPort = DatabaseServerPort,
+                    dbUser = DatabaseUser
+                };
+            }
+        }
 
         /// <summary>
         /// Creates config.json
@@ -61,9 +73,9 @@ namespace PirBanka.Server.Controllers
 
             Console.WriteLine();
             Console.WriteLine("Now set the database connection. PirBanka can't work without MySQL 5.8+");
-            Console.WriteLine("What is your database server IP or hostname?");
+            Console.WriteLine("What is your database server IP or hostname (default localhost)?");
             var dbIp = Console.ReadLine();
-            if (String.IsNullOrEmpty(dbIp)) throw new ArgumentNullException();
+            if (String.IsNullOrEmpty(dbIp)) dbIp = "localhost";
             newConfig.databaseServer = dbIp;
 
             Console.WriteLine("What is your database port? (default is 3306)");
@@ -101,31 +113,28 @@ namespace PirBanka.Server.Controllers
             Database database = new Database(mySqlConnectionString);
 
             // Fill DB
-            bool dbFilled = database.InitializeDb();
+            database.InitializeDb();
             database.Dispose();
 
             // After DB is filled correctly, save configuration to config.json
-            if(dbFilled)
-            {
-                Console.WriteLine("PirBanka is configured. Now we will save all informations to config.json: ");
+            Console.WriteLine("PirBanka is configured. Now we will save all informations to config.json: ");
 
-                try
-                {
-                    File.WriteAllText(configPath, JsonConvert.SerializeObject(newConfig));
-                    Console.WriteLine("Configuration successfully saved.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Configuration can't be saved because of {ex.Message}. You can create the config.json by yourself and then try to solve the issue.");
-                    Console.WriteLine("Content of config.json:");
-                    Console.Write(JsonConvert.SerializeObject(newConfig));
-                }
-            }
-            else
+            try
             {
-                Console.WriteLine("DB was not filled correctly. Exiting...");
-                Environment.Exit(1000);
+                var configToSerialize = new List<ConfigJson>();
+                configToSerialize.Add(newConfig);
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(configToSerialize));
+                Console.WriteLine("Configuration successfully saved.");
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Configuration can't be saved because of {ex.Message}. You can create the config.json by yourself and then try to solve the issue.");
+                Console.WriteLine("Content of config.json:");
+                Console.Write(JsonConvert.SerializeObject(newConfig));
+            }
+
+            // Empty line
+            Console.WriteLine();
         }
     }
 }
