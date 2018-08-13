@@ -1,4 +1,6 @@
-﻿namespace PirBanka.Server.Models.Db
+﻿using System;
+
+namespace PirBanka.Server.Models.Db
 {
     internal class Account
     {
@@ -6,7 +8,9 @@
         public int identity { get; set; }
         public string description { get; set; }
         public bool market { get; set; }
-        public int currency { get; set; }
+        public int currency_id { get; set; }
+        public DateTime created { get; set; }
+        public string account_identifier { get; set; }
         public decimal balance { get; set; }
     }
 }

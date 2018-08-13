@@ -29,7 +29,6 @@ namespace PirBanka.Server
             Database db = new Database(config.DbConnectionString);
             SimpleHttpServer app = new SimpleHttpServer();
 
-
             app.Get(@"^/$", async (req, res) =>
             {
                 res.Content = File.ReadAllText($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}api-docs{Path.DirectorySeparatorChar}index.html");
@@ -76,6 +75,7 @@ namespace PirBanka.Server
             app.Get(@"^/currencies$", async (req, res) =>
             {
                 List<Currency> result = db.Get<Currency>(db.GetCommand(), Database.Tables.currencies_view);
+
                 res.Content = JsonConvert.SerializeObject(result);
                 res.ContentType = "application/json; charset=utf-8";
                 await res.SendAsync();
@@ -83,24 +83,22 @@ namespace PirBanka.Server
 
             app.Get(@"^/currencies/(\d+)$", async (req, res) =>
             {
-                int id = Convert.ToInt32(Regex.Match(req.Endpoint, @"^/currencies/(\d+)$", RegexOptions.IgnoreCase).Groups[1].Value);
-                Currency result = db.Get<Currency>(db.GetCommand(), Database.Tables.currencies_view).FirstOrDefault(x => x.id == id);
+                var match = Regex.Match(req.Endpoint, @"^/currencies/(\d+)$", RegexOptions.IgnoreCase);
+                int id = Convert.ToInt32(match.Groups[1].Value);
+
+                Currency result = db.Get<Currency>(db.GetCommand(), Database.Tables.currencies_view, $"id={id}").FirstOrDefault();
+
                 res.Content = JsonConvert.SerializeObject(result);
                 res.ContentType = "application/json; charset=utf-8";
                 await res.SendAsync();
             });
 
 
-            // Historical list of exchange rates for specific currency
-            app.Get(@"^/currencies/(\d+)/exchange-rates-history$", async (req, res) =>
-            {
-
-            });
-
             // List of all identities
             app.Get(@"^/identities$", async (req, res) =>
             {
                 List<Identity> result = db.Get<Identity>(db.GetCommand(), Database.Tables.identities);
+
                 res.Content = JsonConvert.SerializeObject(result);
                 res.ContentType = "application/json; charset=utf-8";
                 await res.SendAsync();
@@ -108,8 +106,11 @@ namespace PirBanka.Server
 
             app.Get(@"^/identities/(\d+)$", async (req, res) =>
             {
-                int id = Convert.ToInt32(Regex.Match(req.Endpoint, @"^/identities/(\d+)$", RegexOptions.IgnoreCase).Groups[1].Value);
-                Identity result = db.Get<Identity>(db.GetCommand(), Database.Tables.identities).FirstOrDefault(x => x.id == id);
+                var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)$", RegexOptions.IgnoreCase);
+                int id = Convert.ToInt32(match.Groups[1].Value);
+
+                Identity result = db.Get<Identity>(db.GetCommand(), Database.Tables.identities, $"id={id}").FirstOrDefault();
+
                 res.Content = JsonConvert.SerializeObject(result);
                 res.ContentType = "application/json; charset=utf-8";
                 await res.SendAsync();
@@ -117,18 +118,64 @@ namespace PirBanka.Server
 
             app.Get(@"^/identities/(\d+)/accounts$", async (req, res) =>
             {
+                var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts$", RegexOptions.IgnoreCase);
+                var id = match.Groups[1].Value;
 
+                List<Account> result = db.Get<Account>(db.GetCommand(), Database.Tables.accounts_view, $"identity={id}");
+
+                res.Content = JsonConvert.SerializeObject(result);
+                res.ContentType = "application/json; charset=utf-8";
+                await res.SendAsync();
             });
 
             app.Get(@"^/identities/(\d+)/accounts/(\d+)$", async (req, res) =>
             {
+                var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)$", RegexOptions.IgnoreCase);
+                var id = match.Groups[1].Value;
+                var account_id = match.Groups[2].Value;
 
+                Account result = db.Get<Account>(db.GetCommand(), Database.Tables.accounts_view, $"identity={id} and id={account_id}").FirstOrDefault();
+
+                res.Content = JsonConvert.SerializeObject(result);
+                res.ContentType = "application/json; charset=utf-8";
+                await res.SendAsync();
             });
 
 
             app.Get(@"^/identities/(\d+)/accounts/(\d+)/transactions$", async (req, res) =>
             {
+                var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions$", RegexOptions.IgnoreCase);
+                var account_id = match.Groups[2].Value;
 
+                List<Transaction> result = db.Get<Transaction>(db.GetCommand(), Database.Tables.transactions, $"source_account={account_id} or target_account={account_id}");
+
+                res.Content = JsonConvert.SerializeObject(result);
+                res.ContentType = "application/json; charset=utf-8";
+                await res.SendAsync();
+            });
+
+            app.Get(@"^/identities/(\d+)/accounts/(\d+)/transactions/incoming$", async (req, res) =>
+            {
+                var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/incoming$", RegexOptions.IgnoreCase);
+                var account_id = match.Groups[2].Value;
+
+                List<Transaction> result = db.Get<Transaction>(db.GetCommand(), Database.Tables.transactions, $"target_account={account_id}");
+
+                res.Content = JsonConvert.SerializeObject(result);
+                res.ContentType = "application/json; charset=utf-8";
+                await res.SendAsync();
+            });
+
+            app.Get(@"^/identities/(\d+)/accounts/(\d+)/transactions/outgoing$", async (req, res) =>
+            {
+                var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/outgoing$", RegexOptions.IgnoreCase);
+                var account_id = match.Groups[2].Value;
+
+                List<Transaction> result = db.Get<Transaction>(db.GetCommand(), Database.Tables.transactions, $"source_account={account_id}");
+
+                res.Content = JsonConvert.SerializeObject(result);
+                res.ContentType = "application/json; charset=utf-8";
+                await res.SendAsync();
             });
 
 

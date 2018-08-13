@@ -8,5 +8,6 @@ namespace PirBanka.Server.Models.Db
         public string name { get; set; }
         public string display_name { get; set; }
         public DateTime created { get; set; }
+        public bool admin { get; set; }
     }
 }

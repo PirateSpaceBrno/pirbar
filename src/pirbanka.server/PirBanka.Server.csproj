@@ -51,6 +51,7 @@
     <Compile Include="Models\Db\Account.cs" />
     <Compile Include="Models\Db\Currency.cs" />
     <Compile Include="Models\Db\Identity.cs" />
+    <Compile Include="Models\Db\Transaction.cs" />
     <Compile Include="Models\MySqlConnectionString.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Models\ConfigJson.cs" />

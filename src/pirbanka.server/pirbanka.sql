@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Počítač: localhost
--- Vytvořeno: Čtv 09. srp 2018, 21:24
+-- Vytvořeno: Pon 13. srp 2018, 05:30
 -- Verze serveru: 5.7.23
 -- Verze PHP: 7.0.30-0+deb9u1
 
@@ -29,9 +29,10 @@ SET time_zone = "+00:00";
 CREATE TABLE `accounts` (
   `id` int(11) NOT NULL,
   `identity` int(11) NOT NULL,
-  `currency` int(11) NOT NULL,
+  `currency_id` int(11) NOT NULL,
   `market` tinyint(1) NOT NULL DEFAULT '0',
-  `description` varchar(160) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
+  `description` varchar(160) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -41,7 +42,24 @@ CREATE TABLE `accounts` (
 -- (See below for the actual view)
 --
 CREATE TABLE `accounts_balances` (
-`account` int(11)
+`id` int(11)
+,`balance` decimal(59,18)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Zástupná struktura pro pohled `accounts_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `accounts_view` (
+`id` int(11)
+,`identity` int(11)
+,`currency_id` int(11)
+,`market` tinyint(1)
+,`description` varchar(160)
+,`created` datetime
+,`account_identifier` varchar(15)
 ,`balance` decimal(59,18)
 );
 
@@ -55,7 +73,9 @@ CREATE TABLE `authentications` (
   `id` int(11) NOT NULL,
   `identity` int(11) NOT NULL,
   `account` int(11) DEFAULT NULL,
-  `content` varchar(100) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
+  `content` varchar(100) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expiration` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -73,6 +93,18 @@ CREATE TABLE `currencies` (
 -- --------------------------------------------------------
 
 --
+-- Zástupná struktura pro pohled `currencies_rates`
+-- (See below for the actual view)
+--
+CREATE TABLE `currencies_rates` (
+`id` int(11)
+,`valid_since` datetime
+,`rate` decimal(36,18) unsigned
+);
+
+-- --------------------------------------------------------
+
+--
 -- Zástupná struktura pro pohled `currencies_view`
 -- (See below for the actual view)
 --
@@ -81,7 +113,7 @@ CREATE TABLE `currencies_view` (
 ,`name` varchar(50)
 ,`shortname` varchar(3)
 ,`valid_since` datetime
-,`rate` decimal(36,18) unsigned
+,`rate` decimal(36,18)
 );
 
 -- --------------------------------------------------------
@@ -106,7 +138,9 @@ CREATE TABLE `exchange_rates` (
 CREATE TABLE `identities` (
   `id` int(11) NOT NULL,
   `name` varchar(30) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
-  `display_name` varchar(80) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL
+  `display_name` varchar(80) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `admin` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -117,7 +151,7 @@ CREATE TABLE `identities` (
 
 CREATE TABLE `transactions` (
   `id` int(11) NOT NULL,
-  `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `source_account` int(11) NOT NULL,
   `target_account` int(11) NOT NULL,
   `amount` decimal(36,18) NOT NULL
@@ -130,7 +164,24 @@ CREATE TABLE `transactions` (
 --
 DROP TABLE IF EXISTS `accounts_balances`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `accounts_balances`  AS  select `a`.`target_account` AS `account`,(sum(`a`.`amount`) - `b`.`amount`) AS `balance` from (`transactions` `a` join (select sum(`transactions`.`amount`) AS `amount`,`transactions`.`source_account` AS `source_account` from `transactions` group by `transactions`.`source_account`) `b` on((`b`.`source_account` = `a`.`target_account`))) group by `a`.`target_account` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `accounts_balances`  AS  select `a`.`target_account` AS `id`,(sum(`a`.`amount`) - `b`.`amount`) AS `balance` from (`transactions` `a` join (select sum(`transactions`.`amount`) AS `amount`,`transactions`.`source_account` AS `source_account` from `transactions` group by `transactions`.`source_account`) `b` on((`b`.`source_account` = `a`.`target_account`))) group by `a`.`target_account` ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura pro pohled `accounts_view`
+--
+DROP TABLE IF EXISTS `accounts_view`;
+-- právě se používá(#1046 - Nebyla vybrána žádná databáze)
+
+-- --------------------------------------------------------
+
+--
+-- Struktura pro pohled `currencies_rates`
+--
+DROP TABLE IF EXISTS `currencies_rates`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `currencies_rates`  AS  select `c`.`id` AS `id`,`d`.`valid_since` AS `valid_since`,`d`.`rate` AS `rate` from (`currencies` `c` join (select `t`.`currency` AS `currency`,`t`.`valid_since` AS `valid_since`,`t`.`rate` AS `rate` from `exchange_rates` `t` where (`t`.`valid_since` = (select max(`exchange_rates`.`valid_since`) from `exchange_rates` where (`exchange_rates`.`currency` = `t`.`currency`))) group by `t`.`currency`) `d` on((`d`.`currency` = `c`.`id`))) ;
 
 -- --------------------------------------------------------
 
@@ -138,8 +189,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Struktura pro pohled `currencies_view`
 --
 DROP TABLE IF EXISTS `currencies_view`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `currencies_view`  AS  select `c`.`id` AS `id`,`c`.`name` AS `name`,`c`.`shortname` AS `shortname`,`d`.`valid_since` AS `valid_since`,`d`.`rate` AS `rate` from (`currencies` `c` join (select `t`.`currency` AS `currency`,`t`.`valid_since` AS `valid_since`,`t`.`rate` AS `rate` from `exchange_rates` `t` where (`t`.`valid_since` = (select max(`exchange_rates`.`valid_since`) from `exchange_rates` where (`exchange_rates`.`currency` = `t`.`currency`))) group by `t`.`currency`) `d` on((`d`.`currency` = `c`.`id`))) ;
+-- právě se používá(#1046 - Nebyla vybrána žádná databáze)
 
 --
 -- Klíče pro exportované tabulky
@@ -151,7 +201,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 ALTER TABLE `accounts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_identity` (`identity`),
-  ADD KEY `fk_currency_account` (`currency`);
+  ADD KEY `fk_currency_account` (`currency_id`);
 
 --
 -- Klíče pro tabulku `authentications`
@@ -199,7 +249,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT pro tabulku `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT pro tabulku `authentications`
 --
@@ -233,7 +283,7 @@ ALTER TABLE `transactions`
 -- Omezení pro tabulku `accounts`
 --
 ALTER TABLE `accounts`
-  ADD CONSTRAINT `fk_currency_account` FOREIGN KEY (`currency`) REFERENCES `currencies` (`id`),
+  ADD CONSTRAINT `fk_currency_account` FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`id`),
   ADD CONSTRAINT `fk_identity` FOREIGN KEY (`identity`) REFERENCES `identities` (`id`);
 
 --

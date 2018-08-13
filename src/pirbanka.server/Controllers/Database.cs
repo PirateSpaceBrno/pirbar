@@ -94,9 +94,12 @@ namespace PirBanka.Server.Controllers
         /// <param name="command"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        internal List<T> Get<T>(MySqlCommand command, Tables tableName) where T : class, new()
+        internal List<T> Get<T>(MySqlCommand command, Tables tableName, string where = "") where T : class, new()
         {
-            string query = $"SELECT * FROM {tableName};";
+            string query = $"SELECT * FROM {tableName}";
+            if (!string.IsNullOrEmpty(where)) query += $" WHERE {where}";
+            query += ";";
+
             command.CommandText = query;
             Console.WriteLine($"Querying: {query}");
             DataTable table = new DataTable();
@@ -160,8 +163,9 @@ namespace PirBanka.Server.Controllers
         internal enum Tables
         {
             currencies_view,
-            identities
+            identities,
+            accounts_view,
+            transactions
         }
-
     }
 }
