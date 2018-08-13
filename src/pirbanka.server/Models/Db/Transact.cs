@@ -2,7 +2,7 @@
 
 namespace PirBanka.Server.Models.Db
 {
-    internal class Transaction
+    internal class Transact
     {
         public int id { get; set; }
         public DateTime created { get; set; }

@@ -30,5 +30,20 @@ namespace PirBanka.Server.Models
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public string databasePassword { get; set; }
+
+        public string dbConnectionString { get
+            {
+                string connectionString = "";
+
+                connectionString += "server=" + databaseServer + ";";
+                connectionString += "user=" + databaseUser + ";";
+                connectionString += "database=" + databaseName + ";";
+                connectionString += "port=" + databaseServerPort + ";";
+                connectionString += "password=" + databasePassword + ";";
+                connectionString += "charset=utf8;";
+
+                return connectionString;
+            }
+        }
     }
 }

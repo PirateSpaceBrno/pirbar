@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Počítač: localhost
--- Vytvořeno: Pon 13. srp 2018, 05:30
+-- Vytvořeno: Pon 13. srp 2018, 18:49
 -- Verze serveru: 5.7.23
 -- Verze PHP: 7.0.30-0+deb9u1
 
@@ -73,7 +73,7 @@ CREATE TABLE `authentications` (
   `id` int(11) NOT NULL,
   `identity` int(11) NOT NULL,
   `account` int(11) DEFAULT NULL,
-  `content` varchar(100) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
+  `content` varchar(1000) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expiration` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -172,7 +172,8 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Struktura pro pohled `accounts_view`
 --
 DROP TABLE IF EXISTS `accounts_view`;
--- právě se používá(#1046 - Nebyla vybrána žádná databáze)
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `accounts_view`  AS  select `a`.`id` AS `id`,`a`.`identity` AS `identity`,`a`.`currency_id` AS `currency_id`,`a`.`market` AS `market`,`a`.`description` AS `description`,`a`.`created` AS `created`,concat(`a`.`id`,'/420') AS `account_identifier`,coalesce(`b`.`balance`,0) AS `balance` from (`accounts` `a` left join (select `accounts_balances`.`id` AS `id`,`accounts_balances`.`balance` AS `balance` from `accounts_balances`) `b` on((`b`.`id` = `a`.`id`))) ;
 
 -- --------------------------------------------------------
 
@@ -189,7 +190,8 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- Struktura pro pohled `currencies_view`
 --
 DROP TABLE IF EXISTS `currencies_view`;
--- právě se používá(#1046 - Nebyla vybrána žádná databáze)
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `currencies_view`  AS  select `c`.`id` AS `id`,`c`.`name` AS `name`,`c`.`shortname` AS `shortname`,`r`.`valid_since` AS `valid_since`,coalesce(`r`.`rate`,1.0) AS `rate` from (`currencies` `c` left join (select `currencies_rates`.`id` AS `id`,`currencies_rates`.`valid_since` AS `valid_since`,`currencies_rates`.`rate` AS `rate` from `currencies_rates`) `r` on((`r`.`id` = `c`.`id`))) ;
 
 --
 -- Klíče pro exportované tabulky

@@ -7,7 +7,5 @@ namespace PirBanka.Server.Models.Db
         public int id { get; set; }
         public string name { get; set; }
         public string shortname { get; set; }
-        public DateTime valid_since { get; set; }
-        public decimal rate { get; set; }
     }
 }

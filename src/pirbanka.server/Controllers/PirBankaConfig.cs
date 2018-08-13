@@ -1,5 +1,8 @@
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using PetaPoco;
 using PirBanka.Server.Models;
+using PirBanka.Server.Models.Db;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,19 +34,7 @@ namespace PirBanka.Server.Controllers
         public string DatabaseName => _config.databaseName;
         public string DatabaseUser => _config.databaseUser;
         public string DatabasePassword => _config.databasePassword;
-        public MySqlConnectionString DbConnectionString {
-            get
-            {
-                return new MySqlConnectionString()
-                {
-                    dbName = DatabaseName,
-                    dbPassword = DatabasePassword,
-                    dbServerIp = DatabaseServer,
-                    dbServerPort = DatabaseServerPort,
-                    dbUser = DatabaseUser
-                };
-            }
-        }
+        public string DbConnectionString => _config.dbConnectionString;
 
         /// <summary>
         /// Creates config.json
@@ -99,42 +90,138 @@ namespace PirBanka.Server.Controllers
             newConfig.databasePassword = dbPass;
 
             Console.WriteLine();
+            Console.WriteLine("Now please specify some additional information about your instance.");
+            Console.WriteLine("What will be the default currency? Please type its name:");
+            var currencyName = Console.ReadLine();
+            if (String.IsNullOrEmpty(currencyName)) throw new ArgumentNullException();
+            Console.WriteLine("Now please type its shortname (e.g. currency symbol):");
+            var currencyShortName = Console.ReadLine();
+            if (String.IsNullOrEmpty(currencyShortName)) throw new ArgumentNullException();
+
+
+            Console.WriteLine();
             Console.WriteLine("Thanks, all needed informations were collected. Please wait while DB connection is checked and tables are created.");
 
-            // Connect to DB
-            MySqlConnectionString mySqlConnectionString = new MySqlConnectionString()
-            {
-                dbName = newConfig.databaseName,
-                dbPassword = newConfig.databasePassword,
-                dbServerIp = newConfig.databaseServer,
-                dbServerPort = newConfig.databaseServerPort,
-                dbUser = newConfig.databaseUser
-            };
-            Database database = new Database(mySqlConnectionString);
-
-            // Fill DB
-            database.InitializeDb();
-            database.Dispose();
-
-            // After DB is filled correctly, save configuration to config.json
-            Console.WriteLine("PirBanka is configured. Now we will save all informations to config.json: ");
-
+            bool blockCheck = false;
+            Console.Write(".");
             try
             {
-                var configToSerialize = new List<ConfigJson>();
-                configToSerialize.Add(newConfig);
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(configToSerialize));
-                Console.WriteLine("Configuration successfully saved.");
+                // Connect to DB
+                MySqlConnection db = new MySqlConnection(newConfig.dbConnectionString);
+                Console.Write(".");
+                db.Open();
+                Console.Write(".");
+
+                // Fill DB
+                MySqlCommand command = new MySqlCommand(File.ReadAllText($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}pirbanka.sql"), db);
+                command.ExecuteNonQuery();
+                Console.Write(".");
+                db.Dispose();
+
+                blockCheck = true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Configuration can't be saved because of {ex.Message}. You can create the config.json by yourself and then try to solve the issue.");
-                Console.WriteLine("Content of config.json:");
-                Console.Write(JsonConvert.SerializeObject(newConfig));
+                Console.WriteLine(ex.Message);
+                blockCheck = false;
             }
 
-            // Empty line
-            Console.WriteLine();
+            // Fill db with default bank identity, currency and account
+            if(blockCheck)
+            {
+                blockCheck = false;
+                Console.Write(".");
+
+                using (DatabaseHelper database = new DatabaseHelper(newConfig.dbConnectionString))
+                {
+                    Console.Write(".");
+                    try
+                    {
+                        database.BeginTransaction();
+                        Console.Write(".");
+
+                        Identity bankIdentity = new Identity()
+                        {
+                            name = Server.RemoveSpecialCharacters(newConfig.instanceName),
+                            display_name = newConfig.instanceName,
+                            created = DateTime.Now
+                        };
+                        database.Insert(DatabaseHelper.Tables.identities, bankIdentity);
+                        Console.Write(".");
+
+                        bankIdentity = database.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{bankIdentity.name}'");
+                        Console.Write(".");
+
+                        Currency generalCurrency = new Currency()
+                        {
+                            name = currencyName,
+                            shortname = currencyShortName
+                        };
+                        database.Insert(DatabaseHelper.Tables.currencies, generalCurrency);
+                        Console.Write(".");
+
+                        generalCurrency = database.Get<Currency>(DatabaseHelper.Tables.currencies, $"name='{generalCurrency.name}'");
+                        Console.Write(".");
+
+                        database.Execute("SET FOREIGN_KEY_CHECKS=0;");
+                        Console.Write(".");
+
+                        Account bankOutsideWorldAccount = new Account()
+                        {
+                            currency_id = generalCurrency.id,
+                            identity = bankIdentity.id,
+                            market = false,
+                            description = $"{bankIdentity.display_name} OUTSIDEWORLD account for {generalCurrency.name}",
+                            created = DateTime.Now
+                        };
+                        database.Insert(DatabaseHelper.Tables.accounts, bankOutsideWorldAccount);
+                        Console.Write(".");
+
+                        database.Execute("SET FOREIGN_KEY_CHECKS=1;");
+                        Console.Write(".");
+
+                        database.CompleteTransaction();
+                        Console.Write(".");
+
+                        blockCheck = true;
+                        Console.WriteLine();
+                    }
+                    catch (Exception ex)
+                    {
+                        database.AbortTransaction();
+                        Console.WriteLine(ex.Message);
+                        blockCheck = false;
+                    }
+                }
+            }
+            
+            if (blockCheck)
+            {
+                blockCheck = false;
+                try
+                {
+                    // After DB is filled correctly, save configuration to config.json
+                    Console.WriteLine("PirBanka is configured. Now we will save all informations to config.json: ");
+
+                    var configToSerialize = new List<ConfigJson>();
+                    configToSerialize.Add(newConfig);
+                    File.WriteAllText(configPath, JsonConvert.SerializeObject(configToSerialize));
+                    Console.WriteLine("Configuration successfully saved.");
+
+                    // Empty line
+                    Console.WriteLine();
+                    blockCheck = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Configuration can't be saved because of {ex.Message}. You can create the config.json by yourself and then try to solve the issue.");
+                    Console.WriteLine("Content of config.json:");
+                    Console.Write(JsonConvert.SerializeObject(newConfig));
+                    blockCheck = false;
+                }
+            }
+
+            if (!blockCheck) Environment.Exit(1);
         }
     }
 }
