@@ -44,7 +44,7 @@ namespace PirBanka.Server.Controllers
             doc.Load($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}api-docs{Path.DirectorySeparatorChar}index.html");
             HtmlNode newNode = HtmlNode.CreateNode(content);
             doc.DocumentNode.SelectSingleNode("//body").AppendChild(newNode);
-            return doc.DocumentNode.InnerHtml.Replace("PirBanka", new PirBankaConfig().InstanceName);
+            return doc.DocumentNode.InnerHtml.Replace("PirBanka", Server.config.InstanceName);
         }
 
         internal static List<int> GetUriIds(string request, string regex)
