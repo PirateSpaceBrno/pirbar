@@ -80,6 +80,7 @@
     <Compile Include="Models\Get\Token.cs" />
     <Compile Include="Responses\Delete.cs" />
     <Compile Include="Responses\Get.cs" />
+    <Compile Include="Responses\Misc.cs" />
     <Compile Include="Responses\GetDocs.cs" />
     <Compile Include="Responses\Post.cs" />
     <Compile Include="Responses\Put.cs" />
