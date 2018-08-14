@@ -56,8 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\HttpAuth.cs" />
     <Compile Include="Controllers\DatabaseHelper.cs" />
     <Compile Include="Controllers\PirBankaConfig.cs" />
+    <Compile Include="Controllers\TextHelper.cs" />
     <Compile Include="Models\Db\AccountView.cs" />
     <Compile Include="Models\Db\Account.cs" />
     <Compile Include="Models\Db\Authentication.cs" />
@@ -72,6 +74,7 @@
     </Compile>
     <Compile Include="Models\MySqlConnectionString.cs" />
     <Compile Include="Models\PetaPoco.cs" />
+    <Compile Include="Models\Post\Currencies.Create.cs" />
     <Compile Include="Models\Post\Identities.Authentications.Create.cs" />
     <Compile Include="Models\Post\Identities.Create.cs" />
     <Compile Include="Models\Get\Token.cs" />

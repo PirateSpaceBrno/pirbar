@@ -142,7 +142,7 @@ namespace PirBanka.Server.Controllers
 
                         Identity bankIdentity = new Identity()
                         {
-                            name = Server.RemoveSpecialCharacters(newConfig.instanceName),
+                            name = TextHelper.RemoveSpecialCharacters(newConfig.instanceName),
                             display_name = newConfig.instanceName,
                             created = DateTime.Now
                         };
@@ -171,7 +171,7 @@ namespace PirBanka.Server.Controllers
                             currency_id = generalCurrency.id,
                             identity = bankIdentity.id,
                             market = false,
-                            description = $"{bankIdentity.display_name} OUTSIDEWORLD account for {generalCurrency.name}",
+                            description = $"OUTSIDEWORLD account for {generalCurrency.name}",
                             created = DateTime.Now
                         };
                         database.Insert(DatabaseHelper.Tables.accounts, bankOutsideWorldAccount);

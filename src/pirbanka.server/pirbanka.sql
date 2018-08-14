@@ -218,7 +218,9 @@ ALTER TABLE `authentications`
 -- Klíče pro tabulku `currencies`
 --
 ALTER TABLE `currencies`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `shortname` (`shortname`);
 
 --
 -- Klíče pro tabulku `exchange_rates`
