@@ -1,8 +1,8 @@
 ﻿using JamesWright.SimpleHttp;
-using Newtonsoft.Json;
 using PirBanka.Server.Controllers;
 using PirBanka.Server.Models.Get;
 using PirBanka.Server.Models.Post;
+using PirBanka.Server.Models.Put;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,27 +21,25 @@ namespace PirBanka.Server.Responses
                 return new KeyValuePair<Regex, Action<Request, Response>>(new Regex(action.Key), action.Value);
             }
 
-            return new KeyValuePair<Regex, Action<Request, Response>>();
+            return new KeyValuePair<Regex, Action<Request, Response>>(new Regex(endpoint), JamesWright.SimpleHttp.Actions.Error404);
         }
 
-        private static Dictionary<string, Action<Request, Response>> Actions = new Dictionary<string, Action<Request, Response>>()
+        public static Dictionary<string, Action<Request, Response>> Actions = new Dictionary<string, Action<Request, Response>>()
         {
             {
-                @"^/doc/authenticate$",
+                @"^/doc/auth/token$",
                 new Action<Request, Response>( async (req, res) =>
                 {
                     string newContent = "<div>";
-                    newContent += "<h2>Authenticate</h2>";
-                    newContent += "<p>You can authenticate and create token with 15 minutes expiration for future operations.<br />";
-                    newContent += "Token can be created by following authorized request:";
+                    newContent += "<h2>Authorization - get Token</h2>";
+                    newContent += "<p>You can create token with 15 minutes expiration for future operations by following authorized request:";
                     newContent += "<pre>";
-                    newContent += "request type: POST\n";
-                    newContent += "endpoint: /authenticate\n";
-                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "request type: GET\n";
+                    newContent += "endpoint: /auth/token\n";
+                    newContent += "header: Authorization with Identity access (Username and Password)\n";
                     newContent += "response: application/json\n";
-                    newContent += $"response content: {JsonConvert.SerializeObject(new Token() { token = "token value" })}";
+                    newContent += $"response content: {JsonHelper.SerializeObject(new Token() { token = "token value", authentications_id = 0, expiration = DateTime.Now })}";
                     newContent += "</pre>";
-                    newContent += "Token can be requested just for Identities access, so UserName has to be filled and Password must correspond to Authentication record for Identity.";
                     newContent += "</p>";
                     newContent += "</div>";
 
@@ -51,7 +49,7 @@ namespace PirBanka.Server.Responses
                 }
             )},
             {
-                @"^/doc/identities/create$",
+                @"^/doc/identities$",
                 new Action<Request, Response>( async (req, res) =>
                 {
                     string newContent = "<div>";
@@ -59,9 +57,9 @@ namespace PirBanka.Server.Responses
                     newContent += "<p>You can create new identity by following request:";
                     newContent += "<pre>";
                     newContent += "request type: POST\n";
-                    newContent += "endpoint: /identities/create\n";
+                    newContent += "endpoint: /identities\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonConvert.SerializeObject(new IdentitiesCreate() { name = "Your unique username", password = "Your password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesCreate() { name = "Your unique username", password = "Your password" })}";
                     newContent += "</pre>";
                     newContent += "Passwords are stored as SHA512 hash.";
                     newContent += "</p>";
@@ -73,20 +71,20 @@ namespace PirBanka.Server.Responses
                 }
             )},
             {
-                @"^/doc/identities/(\d+)/authentications/create$",
+                @"^/doc/identities/(\d+)/authentications$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/authentications/create$")[1];
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/authentications$")[1];
 
                     string newContent = "<div>";
                     newContent += $"<h2>Create Authentication for Identity {id}</h2>";
                     newContent += "<p>You can create new Identity Authentication by following authorized request:";
                     newContent += "<pre>";
                     newContent += "request type: POST\n";
-                    newContent += $"endpoint: /identities/{id}/authentications/create\n";
+                    newContent += $"endpoint: /identities/{id}/authentications\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonConvert.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
                     newContent += "</pre>";
                     newContent += "Password is stored as SHA512 hash.";
                     newContent += "</p>";
@@ -108,11 +106,11 @@ namespace PirBanka.Server.Responses
                     newContent += $"<h2>Update Authentication</h2>";
                     newContent += "<p>You can update this Identity Authentication by following authorized request:";
                     newContent += "<pre>";
-                    newContent += "request type: POST\n";
+                    newContent += "request type: PUT\n";
                     newContent += $"endpoint: /identities/{identityId}/authentications/{authId}\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonConvert.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
                     newContent += "</pre>";
                     newContent += "Password is stored as SHA512 hash.";
                     newContent += "</p>";
@@ -135,7 +133,7 @@ namespace PirBanka.Server.Responses
                 }
             )},
             {
-                @"^/doc/currencies/create$",
+                @"^/doc/currencies$",
                 new Action<Request, Response>( async (req, res) =>
                 {
                     string newContent = "<div>";
@@ -143,11 +141,201 @@ namespace PirBanka.Server.Responses
                     newContent += "<p>You can create new currency by following authorized request:";
                     newContent += "<pre>";
                     newContent += "request type: POST\n";
-                    newContent += "endpoint: /currencies/create\n";
+                    newContent += "endpoint: /currencies\n";
                     newContent += "header: Authorization with Administrator access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonConvert.SerializeObject(new CurrenciesCreate() { name = "Currency display name", shortname = "Curr" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesCreate() { name = "Currency display name", shortname = "Curr" })}";
                     newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/auth$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    string newContent = "<div>";
+                    newContent += "<h2>Authorization</h2>";
+                    newContent += "<p>Some requests needs authorization. You can authorize your request by sending Authorization header.</p>";
+                    newContent += "<p>";
+                    newContent += "<b>Authorization with Username and Password:</b>";
+                    newContent += "<pre>";
+                    newContent += "header[Authorization] = \"BASIC Username:Password\"\n";
+                    newContent += "String Username:Password is encoded with BASE64";
+                    newContent += "</pre>";
+                    newContent += "<b>Authorization with Token:</b>";
+                    newContent += "<pre>";
+                    newContent += "header[Authorization] = \"TOKEN TokenValue\"\n";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/accounts$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts$")[1];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Create Account for Identity {id}</h2>";
+                    newContent += "<p>You can create new Account by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /identities/{id}/accounts\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsCreate() { currencyId = 0, description = "My account" })}";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/accounts/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)$")[2];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Update Account description</h2>";
+                    newContent += "<p>You can update Account description by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: PUT\n";
+                    newContent += $"endpoint: /identities/{id}/accounts/{accId}\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsUpdate() { description = "My account" })}";
+                    newContent += "</pre>";
+                    newContent += "NOTE! General account description cannot be changed.";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/accounts/(\d+)/transactions$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)/transactions$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)/transactions$")[2];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Send transaction</h2>";
+                    newContent += "<p>You can send transaction from this account by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /identities/{id}/accounts/{accId}/transactions\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new TransactCreate() { targetAccountIdentifier = "1/420", amount = 200 })}";
+                    newContent += "</pre>";
+                    newContent += "Target account must be in the same currency as source account.<br />";
+                    newContent += "Transaction amount cannot be bigger than source account balance.";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/accounts/(\d+)/deposit$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)/deposit$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)/deposit$")[2];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Deposit</h2>";
+                    newContent += "<p>You can deposit funds to this account by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /identities/{id}/accounts/{accId}/deposit\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new TransactBase() { amount = 200 })}";
+                    newContent += "</pre>";
+                    newContent += "With the deposit submitted, put equivalent funds into the bank chest.";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/accounts/(\d+)/withdrawal$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)/withdrawal$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/accounts/(\d+)/withdrawal$")[2];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Withdrawal</h2>";
+                    newContent += "<p>You can withdrawal funds from this account by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /identities/{id}/accounts/{accId}/withdrawal\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new TransactBase() { amount = 200 })}";
+                    newContent += "</pre>";
+                    newContent += "With the withdrawal submitted, take equivalent funds from the bank chest.";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/currencies/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/currencies/(\d+)$")[1];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Update Currency {id}</h2>";
+                    newContent += "<p>You can update currency by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: PUT\n";
+                    newContent += $"endpoint: /currencies/{id}\n";
+                    newContent += "header: Authorization with Administrator access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += "<b>Update only name</b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesUpdate() { name = "Currency new fancy name", shortname = "" })}\n";
+                    newContent += "<b>Update only shortname</b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesUpdate() { name = "", shortname = "Currency new shortname" })}\n";
+                    newContent += "<b>Update both name and shortname</b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesUpdate() { name = "Currency new fancy name", shortname = "Currency new shortname" })}\n";
+                    newContent += "<b>Update only exchange rate</b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesUpdate() { name = "", shortname = "", exchangeRate = 2 })}\n";
+                    newContent += "<b>Update all</b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesUpdate() { name = "Currency new fancy name", shortname = "Currency new shortname", exchangeRate = 2 })}\n";
+                    newContent += "</pre>";
+                    newContent += "NOTE! Name and shortname will be updated if their value is not empty or the same as actual.<br />";
+                    newContent += "Exchange rate will be updated if its value is not null or negative.\n";
+                    newContent += "Exchange rate cannot be updated for general currency.";
                     newContent += "</p>";
                     newContent += "</div>";
 

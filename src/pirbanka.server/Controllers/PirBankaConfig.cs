@@ -1,6 +1,4 @@
 using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
-using PetaPoco;
 using PirBanka.Server.Models;
 using PirBanka.Server.Models.Db;
 using System;
@@ -22,7 +20,7 @@ namespace PirBanka.Server.Controllers
             }
 
             var configJson = File.ReadAllText(configPath);
-            _config = JsonConvert.DeserializeObject<List<ConfigJson>>(configJson)[0];
+            _config = JsonHelper.DeserializeObject<List<ConfigJson>>(configJson)[0];
         }
 
         public string ListenGateway => _config.listenGateway;
@@ -205,7 +203,7 @@ namespace PirBanka.Server.Controllers
 
                     var configToSerialize = new List<ConfigJson>();
                     configToSerialize.Add(newConfig);
-                    File.WriteAllText(configPath, JsonConvert.SerializeObject(configToSerialize));
+                    File.WriteAllText(configPath, JsonHelper.SerializeObject(configToSerialize));
                     Console.WriteLine("Configuration successfully saved.");
 
                     // Empty line
@@ -216,7 +214,7 @@ namespace PirBanka.Server.Controllers
                 {
                     Console.WriteLine($"Configuration can't be saved because of {ex.Message}. You can create the config.json by yourself and then try to solve the issue.");
                     Console.WriteLine("Content of config.json:");
-                    Console.Write(JsonConvert.SerializeObject(newConfig));
+                    Console.Write(JsonHelper.SerializeObject(newConfig));
                     blockCheck = false;
                 }
             }

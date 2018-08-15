@@ -13,102 +13,34 @@ namespace PirBanka.Server.Controllers
         /// <param name="auth"></param>
         /// <param name="accessLevel"></param>
         /// <returns></returns>
-        internal static Authentication AuthenticateHttpRequest(DatabaseHelper db, NetworkCredential auth, AccessLevel minAccessLevel, int identityId = 0, int accountId = 0)
+        internal static Authentication AuthenticateHttpRequest(NetworkCredential auth, AccessLevel minAccessLevel, int identityId = 0, int accountId = 0)
         {
             if (auth != null)
             {
-                var authentication = db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"content='{TextHelper.SHA512(auth.Password)}'");
+                var authentication = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"content='{TextHelper.SHA512(auth.Password)}'");
+                var authLevel = GetAuthLevel(auth, authentication, identityId, accountId);
 
-                if (authentication != null)
+                // Compare minimal access level with authetication access level
+                if (authLevel >= minAccessLevel)
                 {
-                    AccessLevel authLevel = AccessLevel.None;
-
-                    // Check authentication expiration
-                    if (authentication.expiration != null)
-                    {
-                        var expiration = (DateTime)authentication.expiration;
-                        if (expiration.Subtract(DateTime.Now).TotalSeconds <= 0)
-                        {
-                            db.Delete(DatabaseHelper.Tables.authentications, authentication);
-                            authLevel = AccessLevel.None;
-                        }
-                    }
-
-                    // Check authentication level
-                    switch (auth.Domain)
-                    {
-                        // Credentials can be for Identity or Account (in Account case - username is empty)
-                        case "creds":
-                            if (authentication.account == null)
-                            {
-                                var identity = db.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{auth.UserName}'");
-                                if (identity != null && authentication.identity == identity.id && identity.admin)
-                                {
-                                    authLevel = AccessLevel.Administrator;
-                                }
-                                else if (identity != null && authentication.identity == identity.id)
-                                {
-                                    if (identityId == 0 || (identityId != 0 && identityId == identity.id))
-                                    {
-                                        authLevel = AccessLevel.Identity;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                var account = db.Get<Account>(DatabaseHelper.Tables.accounts, $"id={authentication.account}");
-                                if (accountId == 0 || (accountId != 0 && accountId == account.id))
-                                {
-                                    authLevel = AccessLevel.Account;
-                                }
-                            }
-                            break;
-
-                        // Token is for identity only
-                        case "token":
-                            if (authentication.account == null)
-                            {
-                                var identity = db.Get<Identity>(DatabaseHelper.Tables.identities, $"id='{authentication.identity}'");
-                                if (identity != null && identity.admin)
-                                {
-                                    authLevel = AccessLevel.Administrator;
-                                }
-                                else if (identity != null)
-                                {
-                                    if (identityId == 0 || (identityId != 0 && identityId == authentication.identity))
-                                    {
-                                        authLevel = AccessLevel.Identity;
-                                    }
-                                }
-                                
-                            }
-                            break;
-                    }
-
-                    // Compare minimal access level with authetication access level
-                    if (authLevel >= minAccessLevel)
-                    {
-                        return authentication;
-                    }
+                    return authentication;
                 }
             }
 
             return null;
         }
 
-        internal static Token CreateToken(DatabaseHelper db, NetworkCredential auth)
+        internal static Token CreateToken(NetworkCredential auth, Authentication authentication)
         {
             if (auth != null && auth.Domain == "creds" && !string.IsNullOrEmpty(auth.UserName))
             {
-                var authentication = AuthenticateHttpRequest(db, auth, AccessLevel.Identity);
-
                 if (authentication != null)
                 {
-                    Identity ident = db.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{auth.UserName}'");
-
                     try
                     {
-                        db.BeginTransaction();
+                        Server.db.BeginTransaction();
+
+                        Identity ident = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{auth.UserName}'");
 
                         var token = Guid.NewGuid().ToString();
                         var now = DateTime.Now;
@@ -122,15 +54,16 @@ namespace PirBanka.Server.Controllers
                             expiration = expiration,
                             created = now
                         };
-                        db.Insert(DatabaseHelper.Tables.authentications, newToken);
+                        Server.db.Insert(DatabaseHelper.Tables.authentications, newToken);
+                        newToken = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"content='{TextHelper.SHA512(token)}'");
 
-                        db.CompleteTransaction();
+                        Server.db.CompleteTransaction();
 
-                        return new Token() { token = token, expiration = expiration };
+                        return new Token() { token = token, expiration = expiration, authentications_id = newToken.id };
                     }
                     catch (Exception ex)
                     {
-                        db.AbortTransaction();
+                        Server.db.AbortTransaction();
                         Console.WriteLine(ex.Message);
                     }
                 }
@@ -139,9 +72,95 @@ namespace PirBanka.Server.Controllers
             return null;
         }
 
+        private static AccessLevel GetAuthLevel(NetworkCredential auth, Authentication authentication, int identityId = 0, int accountId = 0)
+        {
+            if (authentication != null)
+            {
+                // Check authentication expiration
+                if (authentication.expiration != null)
+                {
+                    var expiration = (DateTime)authentication.expiration;
+                    if (expiration.Subtract(DateTime.Now).TotalSeconds <= 0)
+                    {
+                        return AccessLevel.Expired;
+                    }
+                    else
+                    {
+                        // If validation is not expired, extend it by next 15 minutes
+                        try
+                        {
+                            Server.db.BeginTransaction();
+                            authentication.expiration = DateTime.Now.AddMinutes(15);
+                            Server.db.Update(DatabaseHelper.Tables.authentications, authentication);
+                            Server.db.CompleteTransaction();
+                        }
+                        catch (Exception ex)
+                        {
+                            Server.db.AbortTransaction();
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+
+                // Check authentication level
+                switch (auth.Domain)
+                {
+                    // Credentials can be for Identity or Account (in Account case - username is empty)
+                    case "creds":
+                        if (authentication.account == null)
+                        {
+                            var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{auth.UserName}'");
+                            if (identity != null && authentication.identity == identity.id && identity.admin)
+                            {
+                                return AccessLevel.Administrator;
+                            }
+                            else if (identity != null && authentication.identity == identity.id)
+                            {
+                                if (identityId == 0 || (identityId != 0 && identityId == identity.id))
+                                {
+                                    return AccessLevel.Identity;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var account = Server.db.Get<Account>(DatabaseHelper.Tables.accounts, $"id={authentication.account}");
+                            if (accountId == 0 || (accountId != 0 && accountId == account.id))
+                            {
+                                return AccessLevel.Account;
+                            }
+                        }
+                        break;
+
+                    // Token is for identity only
+                    case "token":
+                        if (authentication.account == null)
+                        {
+                            var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id='{authentication.identity}'");
+                            if (identity != null && identity.admin)
+                            {
+                                return AccessLevel.Administrator;
+                            }
+                            else if (identity != null)
+                            {
+                                if (identityId == 0 || (identityId != 0 && identityId == authentication.identity))
+                                {
+                                    return AccessLevel.Identity;
+                                }
+                            }
+
+                        }
+                        break;
+                }
+            }
+
+            return AccessLevel.None;
+        }
+
         internal enum AccessLevel
         {
             None,
+            Expired,
             Account,
             Identity,
             Administrator

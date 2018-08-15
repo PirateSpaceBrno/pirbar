@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace PirBanka.Server.Responses
 {
-    public class Put
+    public class AdminGet
     {
         public static KeyValuePair<Regex, Action<Request, Response>> Action(string endpoint)
         {
@@ -28,7 +28,7 @@ namespace PirBanka.Server.Responses
             //    {
 
             //    }
-            //)}
+            //)},
         };
     }
 }

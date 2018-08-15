@@ -75,7 +75,8 @@ namespace PirBanka.Server.Controllers
             accounts,
             accounts_view,
             transactions,
-            authentications
+            authentications,
+            exchange_rates
         }
 
         public void Dispose()

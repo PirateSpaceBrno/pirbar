@@ -58,13 +58,16 @@
   <ItemGroup>
     <Compile Include="Controllers\HttpAuth.cs" />
     <Compile Include="Controllers\DatabaseHelper.cs" />
+    <Compile Include="Controllers\JsonHelper.cs" />
     <Compile Include="Controllers\PirBankaConfig.cs" />
+    <Compile Include="Controllers\PirBankaHelper.cs" />
     <Compile Include="Controllers\TextHelper.cs" />
     <Compile Include="Models\Db\AccountView.cs" />
     <Compile Include="Models\Db\Account.cs" />
     <Compile Include="Models\Db\Authentication.cs" />
     <Compile Include="Models\Db\CurrencyView.cs" />
     <Compile Include="Models\Db\Currency.cs" />
+    <Compile Include="Models\Db\ExchangeRates.cs" />
     <Compile Include="Models\Db\Identity.cs" />
     <Compile Include="Models\Db\Transact.cs" />
     <Compile Include="Models\Generated\Database.cs">
@@ -74,15 +77,28 @@
     </Compile>
     <Compile Include="Models\MySqlConnectionString.cs" />
     <Compile Include="Models\PetaPoco.cs" />
+    <Compile Include="Models\Put\Accounts.Update.cs" />
+    <Compile Include="Models\Put\Currencies.Update.cs" />
+    <Compile Include="Models\Post\Transactions.Base.cs" />
+    <Compile Include="Models\Post\Transactions.Create.cs" />
     <Compile Include="Models\Post\Currencies.Create.cs" />
     <Compile Include="Models\Post\Identities.Authentications.Create.cs" />
+    <Compile Include="Models\Post\Accounts.Create.cs" />
     <Compile Include="Models\Post\Identities.Create.cs" />
     <Compile Include="Models\Get\Token.cs" />
+    <Compile Include="Responses\AdminGet.cs" />
+    <Compile Include="Responses\AdminPut.cs" />
+    <Compile Include="Responses\AuthDelete.cs" />
+    <Compile Include="Responses\AuthGet.cs" />
+    <Compile Include="Responses\AdminPost.cs" />
+    <Compile Include="Responses\AdminDelete.cs" />
     <Compile Include="Responses\Delete.cs" />
     <Compile Include="Responses\Get.cs" />
     <Compile Include="Responses\Misc.cs" />
     <Compile Include="Responses\GetDocs.cs" />
+    <Compile Include="Responses\AuthPost.cs" />
     <Compile Include="Responses\Post.cs" />
+    <Compile Include="Responses\AuthPut.cs" />
     <Compile Include="Responses\Put.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Models\ConfigJson.cs" />

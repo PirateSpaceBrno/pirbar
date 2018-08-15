@@ -4,3 +4,18 @@
     padding: 40px;
     font-family: sans-serif;
 }
+
+a:link, a:visited {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #cccccc;
+    text-decoration: underline;
+}
+
+pre {
+    padding: 0;
+    margin: 5px 0 30px 20px;
+}

@@ -19,10 +19,10 @@ namespace PirBanka.Server.Responses
                 return new KeyValuePair<Regex, Action<Request, Response>>(new Regex(action.Key), action.Value);
             }
 
-            return new KeyValuePair<Regex, Action<Request, Response>>();
+            return new KeyValuePair<Regex, Action<Request, Response>>(new Regex(endpoint), JamesWright.SimpleHttp.Actions.Error404);
         }
 
-        private static Dictionary<string, Action<Request, Response>> Actions = new Dictionary<string, Action<Request, Response>>()
+        public static Dictionary<string, Action<Request, Response>> Actions = new Dictionary<string, Action<Request, Response>>()
         {
             {
                 @"^/$",
@@ -35,29 +35,20 @@ namespace PirBanka.Server.Responses
                             "All GET listing requests returns JSON object.<br />" +
                             "Documentation for POST/PUT/DELETE request type endpoints are reachable via GET request on the route /doc/{endpoint}, which will return HTML page." +
                             "</p>";
-                        newContent += "<b>GET endpoints:</b><br />";
-                        newContent += "<pre>";
-                        var listGetRoutes = Server.app.RouteRepository.Get.Keys;
-                        newContent += string.Join("<br />", listGetRoutes.ToList()).Replace("^", "").Replace("$", "").Replace(@"(\d+)", "ID");
-                        newContent += "</pre>";
 
-                        newContent += "<b>POST endpoints:</b><br />";
-                        newContent += "<pre>";
-                        var listPostRoutes = Server.app.RouteRepository.Post.Keys;
-                        newContent += string.Join("<br />", listPostRoutes.ToList()).Replace("^", "").Replace("$", "").Replace(@"(\d+)", "ID");
-                        newContent += "</pre>";
-
-                        newContent += "<b>PUT endpoints:</b><br />";
-                        newContent += "<pre>";
-                        var listPutRoutes = Server.app.RouteRepository.Put.Keys;
-                        newContent += string.Join("<br />", listPutRoutes.ToList()).Replace("^", "").Replace("$", "").Replace(@"(\d+)", "ID");
-                        newContent += "</pre>";
-
-                        newContent += "<b>DELETE endpoints:</b><br />";
-                        newContent += "<pre>";
-                        var listDeleteRoutes = Server.app.RouteRepository.Delete.Keys;
-                        newContent += string.Join("<br />", listDeleteRoutes.ToList()).Replace("^", "").Replace("$", "").Replace(@"(\d+)", "ID");
-                        newContent += "</pre>";
+                        newContent += SortJoinRoutes(Responses.GetDocs.Actions.Keys, "GET documentation", true);
+                        newContent += SortJoinRoutes(Responses.Get.Actions.Keys, "GET");
+                        newContent += SortJoinRoutes(Responses.Post.Actions.Keys, "POST");
+                        newContent += SortJoinRoutes(Responses.Put.Actions.Keys, "PUT");
+                        newContent += SortJoinRoutes(Responses.Delete.Actions.Keys, "DELETE");
+                        newContent += SortJoinRoutes(Responses.AuthGet.Actions.Keys, "AUTH GET");
+                        newContent += SortJoinRoutes(Responses.AuthPost.Actions.Keys, "AUTH POST");
+                        newContent += SortJoinRoutes(Responses.AuthPut.Actions.Keys, "AUTH PUT");
+                        newContent += SortJoinRoutes(Responses.AuthDelete.Actions.Keys, "AUTH DELETE");
+                        newContent += SortJoinRoutes(Responses.AdminGet.Actions.Keys, "ADMIN GET");
+                        newContent += SortJoinRoutes(Responses.AdminPost.Actions.Keys, "ADMIN POST");
+                        newContent += SortJoinRoutes(Responses.AdminPut.Actions.Keys, "ADMIN PUT");
+                        newContent += SortJoinRoutes(Responses.AdminDelete.Actions.Keys, "ADMIN DELETE");
 
                         newContent += "</div>";
 
@@ -85,5 +76,44 @@ namespace PirBanka.Server.Responses
                 }
             }
         };
+
+        private static string SortJoinRoutes(Dictionary<string, Action<Request, Response>>.KeyCollection keys, string groupName, bool makeLinks = false)
+        {
+            if (keys.Count > 0)
+            {
+                string newContent = $"<b>{groupName} endpoints:</b>";
+                newContent += "<pre>";
+
+                if (makeLinks)
+                {
+                    var keysArr = keys.Select(
+                        x => $"<a href=\"" +
+                        $"{x.ToString().Replace("^", "").Replace("$", "").Replace(@"(\d+)", "0")}" +
+                        $"\">" +
+                        $"{x.ToString().Replace("^", "").Replace("$", "").Replace(@"(\d+)", "ID")}" +
+                        $"</a>")
+                        .ToArray();
+                    Array.Sort(keysArr);
+
+                    newContent += string.Join("<br />", keysArr);
+                }
+                else
+                {
+                    var keysArr = keys.Select(
+                        x => x.ToString()
+                        .Replace("^", "")
+                        .Replace("$", "")
+                        .Replace(@"(\d+)", "ID"))
+                        .ToArray();
+                    Array.Sort(keysArr);
+
+                    newContent += string.Join("<br />", keysArr);
+                }
+
+                newContent += "</pre>";
+                return newContent;
+            }
+            return "";
+        }
     }
 }

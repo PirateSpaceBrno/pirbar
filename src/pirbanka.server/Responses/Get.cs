@@ -1,5 +1,4 @@
 ﻿using JamesWright.SimpleHttp;
-using Newtonsoft.Json;
 using PirBanka.Server.Controllers;
 using PirBanka.Server.Models.Db;
 using System;
@@ -20,7 +19,7 @@ namespace PirBanka.Server.Responses
                 return new KeyValuePair<Regex, Action<Request, Response>>(new Regex(action.Key), action.Value);
             }
 
-            return new KeyValuePair<Regex, Action<Request, Response>>();
+            return new KeyValuePair<Regex, Action<Request, Response>>(new Regex(endpoint), JamesWright.SimpleHttp.Actions.Error404);
         }
 
         public static Dictionary<string, Action<Request, Response>> Actions = new Dictionary<string, Action<Request, Response>>()
@@ -29,9 +28,9 @@ namespace PirBanka.Server.Responses
                 @"^/currencies$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    List<Currency> result = Server.db.GetList<Currency>(DatabaseHelper.Tables.currencies);
+                    var result = Server.db.GetList<Currency>(DatabaseHelper.Tables.currencies);
 
-                    res.Content = JsonConvert.SerializeObject(result);
+                    res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
@@ -40,12 +39,11 @@ namespace PirBanka.Server.Responses
                 @"^/currencies/(\d+)$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var match = Regex.Match(req.Endpoint, @"^/currencies/(\d+)$", RegexOptions.IgnoreCase);
-                    int id = Convert.ToInt32(match.Groups[1].Value);
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/currencies/(\d+)$")[1];
 
-                    Currency result = Server.db.Get<CurrencyView>(DatabaseHelper.Tables.currencies_view, $"id={id}");
+                    var result = Server.db.Get<CurrencyView>(DatabaseHelper.Tables.currencies_view, $"id={id}");
 
-                    res.Content = JsonConvert.SerializeObject(result);
+                    res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
@@ -54,9 +52,9 @@ namespace PirBanka.Server.Responses
                 @"^/identities$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    List<Identity> result = Server.db.GetList<Identity>(DatabaseHelper.Tables.identities);
+                    var result = Server.db.GetList<Identity>(DatabaseHelper.Tables.identities);
 
-                    res.Content = JsonConvert.SerializeObject(result);
+                    res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
@@ -65,12 +63,11 @@ namespace PirBanka.Server.Responses
                 @"^/identities/(\d+)$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)$", RegexOptions.IgnoreCase);
-                    int id = Convert.ToInt32(match.Groups[1].Value);
+                    int id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)$")[1];
 
-                    Identity result = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id={id}");
+                    var result = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id={id}");
 
-                    res.Content = JsonConvert.SerializeObject(result);
+                    res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
@@ -79,12 +76,11 @@ namespace PirBanka.Server.Responses
                 @"^/identities/(\d+)/accounts$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts$", RegexOptions.IgnoreCase);
-                    var id = match.Groups[1].Value;
+                    int id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/accounts$")[1];
 
-                    List<Account> result = Server.db.GetList<Account>(DatabaseHelper.Tables.accounts, $"identity={id}");
+                    var result = Server.db.GetList<Account>(DatabaseHelper.Tables.accounts, $"identity={id}");
 
-                    res.Content = JsonConvert.SerializeObject(result);
+                    res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
@@ -93,13 +89,12 @@ namespace PirBanka.Server.Responses
                 @"^/identities/(\d+)/accounts/(\d+)$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)$", RegexOptions.IgnoreCase);
-                    var id = match.Groups[1].Value;
-                    var account_id = match.Groups[2].Value;
+                    int id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/accounts/(\d+)$")[1];
+                    int account_id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/accounts/(\d+)$")[2];
 
-                    Account result = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={id} and id={account_id}");
+                    var result = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={id} and id={account_id}");
 
-                    res.Content = JsonConvert.SerializeObject(result);
+                    res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
@@ -108,13 +103,21 @@ namespace PirBanka.Server.Responses
                 @"^/identities/(\d+)/accounts/(\d+)/transactions$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions$", RegexOptions.IgnoreCase);
-                    var account_id = match.Groups[2].Value;
+                    int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions$")[2];
 
-                    List<Transact> result = Server.db.GetList<Transact>(DatabaseHelper.Tables.transactions, $"source_account={account_id} or target_account={account_id}");
+                    var account = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={identityId} and id={accId}");
+                    if(account != null)
+                    {
+                        var result = Server.db.GetList<Transact>(DatabaseHelper.Tables.transactions, $"source_account={accId} or target_account={accId}");
+                        res.Content = JsonHelper.SerializeObject(result);
+                        res.ContentType = ContentTypes.Json;
+                    }
+                    else {
+                        res.Content = JsonHelper.SerializeObject(null);
+                        res.ContentType = ContentTypes.Json;
+                    }
 
-                    res.Content = JsonConvert.SerializeObject(result);
-                    res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
             )},
@@ -122,13 +125,21 @@ namespace PirBanka.Server.Responses
                 @"^/identities/(\d+)/accounts/(\d+)/transactions/incoming$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/incoming$", RegexOptions.IgnoreCase);
-                    var account_id = match.Groups[2].Value;
+                    int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/incoming$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/incoming$")[2];
 
-                    List<Transact> result = Server.db.GetList<Transact>(DatabaseHelper.Tables.transactions, $"target_account={account_id}");
+                    var account = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={identityId} and id={accId}");
+                    if(account != null)
+                    {
+                        var result = Server.db.GetList<Transact>(DatabaseHelper.Tables.transactions, $"target_account={accId}");
+                        res.Content = JsonHelper.SerializeObject(result);
+                        res.ContentType = ContentTypes.Json;
+                    }
+                    else {
+                        res.Content = JsonHelper.SerializeObject(null);
+                        res.ContentType = ContentTypes.Json;
+                    }
 
-                    res.Content = JsonConvert.SerializeObject(result);
-                    res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
             )},
@@ -136,39 +147,33 @@ namespace PirBanka.Server.Responses
                 @"^/identities/(\d+)/accounts/(\d+)/transactions/outgoing$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var match = Regex.Match(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/outgoing$", RegexOptions.IgnoreCase);
-                    var account_id = match.Groups[2].Value;
+                    int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/outgoing$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions/outgoing$")[2];
 
-                    List<Transact> result = Server.db.GetList<Transact>(DatabaseHelper.Tables.transactions, $"source_account={account_id}");
-
-                    res.Content = JsonConvert.SerializeObject(result);
-                    res.ContentType = ContentTypes.Json;
+                    var account = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={identityId} and id={accId}");
+                    if(account != null)
+                    {
+                        var result = Server.db.GetList<Transact>(DatabaseHelper.Tables.transactions, $"source_account={accId}");
+                        res.Content = JsonHelper.SerializeObject(result);
+                        res.ContentType = ContentTypes.Json;
+                    }
+                    else {
+                        res.Content = JsonHelper.SerializeObject(null);
+                        res.ContentType = ContentTypes.Json;
+                    }
+                    
                     await res.SendAsync();
                 }
             )},
             {
-                @"^/identities/(\d+)/authentications$",
+                @"^/currencies/(\d+)/exchangeRates$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/authentications$")[1];
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/currencies/(\d+)/exchangeRates$")[1];
 
-                    // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(Server.db, req.UserIdentity, HttpAuth.AccessLevel.Identity, id);
-                    if (auth != null)
-                    {
-                        List<Authentication> result = Server.db.GetList<Authentication>(DatabaseHelper.Tables.authentications, $"identity={id}");
-
-                        res.Content = JsonConvert.SerializeObject(result);
-                        res.ContentType = ContentTypes.Json;
-                    }
-                    else
-                    {
-                        res.Content = "Unauthorized";
-                        res.StatusCode = StatusCodes.ClientError.Unauthorized;
-                        res.ContentType = ContentTypes.Html;
-                    }
-
-
+                    var result = Server.db.GetList<ExchangeRates>(DatabaseHelper.Tables.exchange_rates, $"currency={id}");
+                    res.Content = JsonHelper.SerializeObject(result);
+                    res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
             )},

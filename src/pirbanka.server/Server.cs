@@ -19,48 +19,27 @@ namespace PirBanka.Server
             db = new DatabaseHelper(config.DbConnectionString);
             app = new SimpleHttpServer();
 
-            // Set endpoints
-            #region GET endpoints returning HTML and misc
-                app.Get(Responses.Misc.Action(@"^/$"));
-                app.Get(Responses.Misc.Action(@"^/api-style.css$"));
-                app.Get(Responses.Misc.Action(@"^/favicon.svg$"));
-            #endregion
+            // GET endpoints returning HTML and misc
+            foreach (var x in Responses.Misc.Actions) app.Get(x.Key, x.Value);
+            foreach (var x in Responses.GetDocs.Actions) app.Get(x.Key, x.Value);
 
-            #region GET listing endpoints
-                app.Get(Responses.Get.Action(@"^/currencies$"));
-                app.Get(Responses.Get.Action(@"^/currencies/(\d+)$"));
-                app.Get(Responses.Get.Action(@"^/identities$"));
-                app.Get(Responses.Get.Action(@"^/identities/(\d+)$"));
-                app.Get(Responses.Get.Action(@"^/identities/(\d+)/accounts$"));
-                app.Get(Responses.Get.Action(@"^/identities/(\d+)/accounts/(\d+)$"));
-                app.Get(Responses.Get.Action(@"^/identities/(\d+)/accounts/(\d+)/transactions$"));
-                app.Get(Responses.Get.Action(@"^/identities/(\d+)/accounts/(\d+)/transactions/incoming$"));
-                app.Get(Responses.Get.Action(@"^/identities/(\d+)/accounts/(\d+)/transactions/outgoing$"));
-                app.Get(Responses.Get.Action(@"^/identities/(\d+)/authentications$"));
-            #endregion
+            // endpoints
+            foreach (var x in Responses.Get.Actions) app.Get(x.Key, x.Value);
+            foreach (var x in Responses.Post.Actions) app.Post(x.Key, x.Value);
+            foreach (var x in Responses.Put.Actions) app.Put(x.Key, x.Value);
+            foreach (var x in Responses.Delete.Actions) app.Delete(x.Key, x.Value);
 
-            #region GET endpoints with documentation
-                app.Get(Responses.GetDocs.Action(@"^/doc/authenticate$"));
-                app.Get(Responses.GetDocs.Action(@"^/doc/identities/create$"));
-                app.Get(Responses.GetDocs.Action(@"^/doc/identities/(\d+)/authentications/create$"));
-                app.Get(Responses.GetDocs.Action(@"^/doc/identities/(\d+)/authentications/(\d+)$"));
-                app.Get(Responses.GetDocs.Action(@"^/doc/currencies/create$"));
-            #endregion
+            // AUTH endpoints
+            foreach (var x in Responses.AuthGet.Actions) app.Get(x.Key, x.Value);
+            foreach (var x in Responses.AuthPost.Actions) app.Post(x.Key, x.Value);
+            foreach (var x in Responses.AuthPut.Actions) app.Put(x.Key, x.Value);
+            foreach (var x in Responses.AuthDelete.Actions) app.Delete(x.Key, x.Value);
 
-            #region POST endpoints
-                app.Post(Responses.Post.Action(@"^/authenticate$"));
-                app.Post(Responses.Post.Action(@"^/identities/create$"));
-                app.Post(Responses.Post.Action(@"^/identities/(\d+)/authentications/create$"));
-                app.Post(Responses.Post.Action(@"^/identities/(\d+)/authentications/(\d+)$"));
-                app.Post(Responses.Post.Action(@"^/currencies/create$"));
-            #endregion
-
-            #region DELETE endpoints
-                app.Delete(Responses.Delete.Action(@"^/identities/(\d+)/authentications/(\d+)$"));
-            #endregion
-
-            #region PUT endpoints
-            #endregion
+            // GET endpoints with documentation
+            foreach (var x in Responses.AdminGet.Actions) app.Get(x.Key, x.Value);
+            foreach (var x in Responses.AdminPost.Actions) app.Post(x.Key, x.Value);
+            foreach (var x in Responses.AdminPut.Actions) app.Put(x.Key, x.Value);
+            foreach (var x in Responses.AdminDelete.Actions) app.Delete(x.Key, x.Value);
 
             // Start listener
             app.Start(config.ListenGateway, config.ListenPort);
