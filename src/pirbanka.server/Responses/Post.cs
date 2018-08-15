@@ -36,7 +36,7 @@ namespace PirBanka.Server.Responses
                         Server.db.BeginTransaction();
 
                         var identitiesCreate = JsonHelper.DeserializeObject<IdentitiesCreate>(request);
-                        if(identitiesCreate != null)
+                        if(identitiesCreate != null && !string.IsNullOrEmpty(identitiesCreate.password))
                         {
                             Identity newIdentity = new Identity()
                             {

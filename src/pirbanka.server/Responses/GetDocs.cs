@@ -344,6 +344,223 @@ namespace PirBanka.Server.Responses
                     await res.SendAsync();
                 }
             )},
+            {
+                @"^/doc/identities/(\d+)/markets$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets$")[1];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Create Market for Identity {id}</h2>";
+                    newContent += "<p>You can create new Market by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /identities/{id}/markets\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsCreate() { currencyId = 0, description = "My market" })}";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/markets/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)$")[2];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Update Market description</h2>";
+                    newContent += "<p>You can update Market description by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: PUT\n";
+                    newContent += $"endpoint: /identities/{id}/markets/{accId}\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsUpdate() { description = "My market" })}";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/markets/(\d+)/buy$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/markets/(\d+)/buy$")[1];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Buy from Market {id}</h2>";
+                    newContent += "<p>You can buy stuff from Market by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /markets/{id}/buy\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += "<b>Buy with withdrawal:<b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420" })}";
+                    newContent += "<b>Buy with transfer to account:<b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", targetAccountIdentifier = "2/420" })}";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/markets/buy$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    string newContent = "<div>";
+                    newContent += $"<h2>Buy from Market</h2>";
+                    newContent += "<p>You can buy stuff from Market by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /markets/buy\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += "<b>Buy with withdrawal:<b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", marketPassword = "Stored market account password" })}";
+                    newContent += "<b>Buy with transfer to account:<b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", targetAccountIdentifier = "2/420", marketPassword = "Stored market account password" })}";
+                    newContent += "</pre>";
+                    newContent += "This option is used to identify market account via its stored authentication - e.g. barcode, nfc tag, etc.";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/markets/(\d+)/authentications$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint,@"^/doc/identities/(\d+)/markets/(\d+)/authentications$")[1];
+                    int marketId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[2];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Create Authentication for Market {id}</h2>";
+                    newContent += "<p>You can create new Market Authentication by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /identities/{id}/markets/{marketId}/authentications\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += "</pre>";
+                    newContent += "Password is stored as SHA512 hash.";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)/markets/(\d+)/authentications/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[1];
+                    int marketId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[2];
+                    int authId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[3];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Update Authentication</h2>";
+                    newContent += "<p>You can update this Market Authentication by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: PUT\n";
+                    newContent += $"endpoint: /identities/{identityId}/markets/{marketId}/authentications/{authId}\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += "</pre>";
+                    newContent += "Password is stored as SHA512 hash.";
+                    newContent += "</p>";
+
+                    newContent += $"<h2>Delete Authentication</h2>";
+                    newContent += "<p>You can delete this Identity Authentication by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: DELETE\n";
+                    newContent += $"endpoint: /identities/{identityId}/markets/{marketId}/authentications/{authId}\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "</pre>";
+                    newContent += "WARNING! If you delete all your Identity Authentications, you will loose access to your account.";
+                    newContent += "</p>";
+
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/markets/(\d+)/sell$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/markets/(\d+)/sell$")[1];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Sell to Market {id}</h2>";
+                    newContent += "<p>You can sell stuff to Market by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: POST\n";
+                    newContent += $"endpoint: /markets/{id}/sell\n";
+                    newContent += "header: Authorization with Identity access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += "<b>Sell with deposit:<b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsSell() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420" })}";
+                    newContent += "<b>Sell with transfer from account:<b>\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsSell() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", sourceAccountIdentifier = "2/420" })}";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/identities/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)$")[1];
+
+                    string newContent = "<div>";
+                    newContent += $"<h2>Update Identity {id}</h2>";
+                    newContent += "<p>You can update Identity by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: PUT\n";
+                    newContent += $"endpoint: /identities/{id}\n";
+                    newContent += "header: Authorization with Administrator access\n";
+                    newContent += "content type: application/json; charset=utf8\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesUpdate() { admin = false, displayName = "Display name", name = "Login" })}";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
             //{
             //    @"",
             //    new Action<Request, Response>( async (req, res) =>

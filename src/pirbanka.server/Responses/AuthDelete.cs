@@ -69,6 +69,52 @@ namespace PirBanka.Server.Responses
                     await res.SendAsync();
                 }
             )},
+            {
+                @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[2];
+                    int authId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[3];
+
+                    // Authorized request
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    if (auth != null)
+                    {
+                        try
+                        {
+                            Server.db.BeginTransaction();
+
+                            var authentication = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"id={authId} AND identity={identityId} AND account={accId}");
+                            if (authentication != null)
+                            {
+                                Server.db.Delete(DatabaseHelper.Tables.authentications, authentication);
+                            }
+
+                            Server.db.CompleteTransaction();
+
+                            res.Content = $"Authentication {authId} for Market {accId} deleted.";
+                            res.StatusCode = StatusCodes.Success.NoContent;
+                        }
+                        catch (Exception ex)
+                        {
+                            Server.db.AbortTransaction();
+
+                            res.Content = $"Authentication delete for Market {accId} failed: {ex.Message}";
+                            res.StatusCode = StatusCodes.Redirection.NotModified;
+                            Console.WriteLine($"WARN - {ex.Message}");
+                        }
+                    }
+                    else
+                    {
+                        res.Content = "Unauthorized";
+                        res.StatusCode = StatusCodes.ClientError.Unauthorized;
+                    }
+
+                    res.ContentType = "text/html; charset=utf-8";
+                    await res.SendAsync();
+                }
+            )},
             //{
             //    @"",
             //    new Action<Request, Response>( async (req, res) =>

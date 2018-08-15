@@ -50,5 +50,65 @@ namespace PirBanka.Server.Controllers
 
             Server.db.Insert(DatabaseHelper.Tables.transactions, newTransact);
         }
+
+        public static void SendMarketBuy(AccountView payFrom, AccountView market, AccountView marketPayTo, decimal amount, AccountView targetAccount)
+        {
+            if (payFrom == null)
+            {
+                throw new Exception("Payment account does not exists.");
+            }
+            if (market == null)
+            {
+                throw new Exception($"Market does not exists.");
+            }
+            if (marketPayTo == null)
+            {
+                throw new Exception($"Market account for payments does not exists.");
+            }
+            if (targetAccount == null)
+            {
+                throw new Exception("Target account does not exists.");
+            }
+            if (market.identity != marketPayTo.identity)
+            {
+                throw new Exception("Account to pay to must belong to the same identity as market.");
+            }
+            
+            var marketCurrency = Server.db.Get<CurrencyView>(DatabaseHelper.Tables.currencies_view, $"id={market.currency_id}");
+            var paymentCurrency = Server.db.Get<CurrencyView>(DatabaseHelper.Tables.currencies_view, $"id={payFrom.currency_id}");
+
+            SendTransaction(payFrom, marketPayTo, (amount * marketCurrency.rate)/paymentCurrency.rate);
+            SendTransaction(market, targetAccount, amount);
+        }
+
+        public static void SendMarketSell(AccountView marketPayFrom, AccountView market, AccountView payTo, decimal amount, AccountView sourceAccount)
+        {
+            if (marketPayFrom == null)
+            {
+                throw new Exception("Market account for payments does not exists.");
+            }
+            if (market == null)
+            {
+                throw new Exception($"Market does not exists.");
+            }
+            if (payTo == null)
+            {
+                throw new Exception($"Account to receive payment does not exists.");
+            }
+            if (sourceAccount == null)
+            {
+                throw new Exception("Source account does not exists.");
+            }
+            if (market.identity != marketPayFrom.identity)
+            {
+                throw new Exception("Payment account must belong to the same identity as market.");
+            }
+
+            var marketCurrency = Server.db.Get<CurrencyView>(DatabaseHelper.Tables.currencies_view, $"id={market.currency_id}");
+            var paymentCurrency = Server.db.Get<CurrencyView>(DatabaseHelper.Tables.currencies_view, $"id={payTo.currency_id}");
+
+            SendTransaction(marketPayFrom, payTo, (amount * marketCurrency.rate) / paymentCurrency.rate);
+            SendTransaction(sourceAccount, market, amount);
+        }
     }
 }

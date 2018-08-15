@@ -96,6 +96,14 @@ namespace PirBanka.Server.Controllers
             var currencyShortName = Console.ReadLine();
             if (String.IsNullOrEmpty(currencyShortName)) throw new ArgumentNullException();
 
+            Console.WriteLine();
+            Console.WriteLine("Now please define your administrator account.");
+            Console.WriteLine("Please type administrator name:");
+            var adminName = Console.ReadLine();
+            if (String.IsNullOrEmpty(adminName)) throw new ArgumentNullException();
+            Console.WriteLine("Specify administrator password:");
+            var adminPassword = Console.ReadLine();
+            if (String.IsNullOrEmpty(adminPassword)) throw new ArgumentNullException();
 
             Console.WriteLine();
             Console.WriteLine("Thanks, all needed informations were collected. Please wait while DB connection is checked and tables are created.");
@@ -145,9 +153,18 @@ namespace PirBanka.Server.Controllers
                             created = DateTime.Now
                         };
                         database.Insert(DatabaseHelper.Tables.identities, bankIdentity);
+                        bankIdentity = database.Get<Identity>(DatabaseHelper.Tables.identities, $"display_name='{newConfig.instanceName}'");
                         Console.Write(".");
 
-                        bankIdentity = database.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{bankIdentity.name}'");
+                        Identity admin = new Identity()
+                        {
+                            name = TextHelper.RemoveSpecialCharacters(adminName),
+                            display_name = adminName,
+                            created = DateTime.Now,
+                            admin = true
+                        };
+                        database.Insert(DatabaseHelper.Tables.identities, admin);
+                        admin = database.Get<Identity>(DatabaseHelper.Tables.identities, $"display_name='{adminName}'");
                         Console.Write(".");
 
                         Currency generalCurrency = new Currency()
@@ -156,10 +173,9 @@ namespace PirBanka.Server.Controllers
                             shortname = currencyShortName
                         };
                         database.Insert(DatabaseHelper.Tables.currencies, generalCurrency);
+                        generalCurrency = database.Get<Currency>(DatabaseHelper.Tables.currencies, $"name='{currencyName}'");
                         Console.Write(".");
 
-                        generalCurrency = database.Get<Currency>(DatabaseHelper.Tables.currencies, $"name='{generalCurrency.name}'");
-                        Console.Write(".");
 
                         database.Execute("SET FOREIGN_KEY_CHECKS=0;");
                         Console.Write(".");
@@ -175,6 +191,26 @@ namespace PirBanka.Server.Controllers
                         database.Insert(DatabaseHelper.Tables.accounts, bankOutsideWorldAccount);
                         Console.Write(".");
 
+                        Account adminAcc = new Account()
+                        {
+                            currency_id = generalCurrency.id,
+                            identity = admin.id,
+                            market = false,
+                            description = $"GENERAL account",
+                            created = DateTime.Now
+                        };
+                        database.Insert(DatabaseHelper.Tables.accounts, adminAcc);
+                        Console.Write(".");
+
+                        Authentication adminAuth = new Authentication()
+                        {
+                            identity = admin.id,
+                            created = DateTime.Now,
+                            content = TextHelper.SHA512(adminPassword)
+                        };
+                        database.Insert(DatabaseHelper.Tables.authentications, adminAuth);
+                        Console.Write(".");
+
                         database.Execute("SET FOREIGN_KEY_CHECKS=1;");
                         Console.Write(".");
 
@@ -183,6 +219,8 @@ namespace PirBanka.Server.Controllers
 
                         blockCheck = true;
                         Console.WriteLine();
+
+                        Console.WriteLine($"Administrator username is now '{TextHelper.RemoveSpecialCharacters(adminName)}'");
                     }
                     catch (Exception ex)
                     {

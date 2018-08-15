@@ -173,7 +173,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `accounts_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `accounts_view`  AS  select `a`.`id` AS `id`,`a`.`identity` AS `identity`,`a`.`currency_id` AS `currency_id`,`a`.`market` AS `market`,`a`.`description` AS `description`,`a`.`created` AS `created`,concat(`a`.`id`,'/420') AS `account_identifier`,coalesce(`b`.`balance`,0) AS `balance` from (`accounts` `a` left join (select `accounts_balances`.`id` AS `id`,`accounts_balances`.`balance` AS `balance` from `accounts_balances`) `b` on((`b`.`id` = `a`.`id`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `accounts_view`  AS  select `a`.`id` AS `id`,`a`.`identity` AS `identity`,`a`.`currency_id` AS `currency_id`,`a`.`market` AS `market`,`a`.`description` AS `description`,`a`.`created` AS `created`,concat(concat(concat(concat(`a`.`identity`,'000'),`a`.`id`),'/'),`a`.`currency_id`) AS `account_identifier`,coalesce(`b`.`balance`,0) AS `balance` from (`accounts` `a` left join (select `accounts_balances`.`id` AS `id`,`accounts_balances`.`balance` AS `balance` from `accounts_balances`) `b` on((`b`.`id` = `a`.`id`))) ;
 
 -- --------------------------------------------------------
 

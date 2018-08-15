@@ -177,6 +177,57 @@ namespace PirBanka.Server.Responses
                     await res.SendAsync();
                 }
             )},
+            {
+                @"^/markets$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    var result = Server.db.GetList<Account>(DatabaseHelper.Tables.accounts, $"market=1");
+
+                    res.Content = JsonHelper.SerializeObject(result);
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/markets/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int account_id = TextHelper.GetUriIds(req.Endpoint,  @"^/markets/(\d+)$")[1];
+
+                    var result = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"market=1 and id={account_id}");
+
+                    res.Content = JsonHelper.SerializeObject(result);
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/identities/(\d+)/markets$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/markets$")[1];
+
+                    var result = Server.db.GetList<Account>(DatabaseHelper.Tables.accounts, $"identity={id} AND market=1");
+
+                    res.Content = JsonHelper.SerializeObject(result);
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/identities/(\d+)/markets/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/markets/(\d+)$")[1];
+                    int account_id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/markets/(\d+)$")[2];
+
+                    var result = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={id} and id={account_id} and market=1");
+
+                    res.Content = JsonHelper.SerializeObject(result);
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
             //{
             //    @"",
             //    new Action<Request, Response>( async (req, res) =>

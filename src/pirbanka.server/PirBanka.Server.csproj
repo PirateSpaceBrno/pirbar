@@ -77,6 +77,10 @@
     </Compile>
     <Compile Include="Models\MySqlConnectionString.cs" />
     <Compile Include="Models\PetaPoco.cs" />
+    <Compile Include="Models\Post\Markets.Sell.cs" />
+    <Compile Include="Models\Post\Markets.Create.cs" />
+    <Compile Include="Models\Post\Markets.Buy.cs" />
+    <Compile Include="Models\Put\Identities.Update.cs" />
     <Compile Include="Models\Put\Accounts.Update.cs" />
     <Compile Include="Models\Put\Currencies.Update.cs" />
     <Compile Include="Models\Post\Transactions.Base.cs" />

@@ -100,6 +100,61 @@ namespace PirBanka.Server.Responses
                     await res.SendAsync();
                 }
             )},
+            {
+                @"^/identities/(\d+)/markets/(\d+)/authentications$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications$")[2];
+
+                    // Authorized request
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    if (auth != null)
+                    {
+                        List<Authentication> result = Server.db.GetList<Authentication>(DatabaseHelper.Tables.authentications, $"identity={identityId} AND account={accId}");
+
+                        res.Content = JsonHelper.SerializeObject(result);
+                        res.ContentType = ContentTypes.Json;
+                    }
+                    else
+                    {
+                        res.Content = "Unauthorized";
+                        res.StatusCode = StatusCodes.ClientError.Unauthorized;
+                        res.ContentType = ContentTypes.Html;
+                    }
+
+
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[1];
+                    int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[2];
+                    int authId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[3];
+
+                    // Authorized request
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    if (auth != null)
+                    {
+                        Authentication result = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"id={authId} AND identity={identityId} AND account={accId}");
+
+                        res.Content = JsonHelper.SerializeObject(result);
+                        res.ContentType = ContentTypes.Json;
+                    }
+                    else
+                    {
+                        res.Content = "Unauthorized";
+                        res.StatusCode = StatusCodes.ClientError.Unauthorized;
+                        res.ContentType = ContentTypes.Html;
+                    }
+
+
+                    await res.SendAsync();
+                }
+            )},
             //{
             //    @"",
             //    new Action<Request, Response>( async (req, res) =>
