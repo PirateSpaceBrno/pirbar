@@ -1,7 +1,7 @@
 PirBanka
 ---------
 PirBanka is set of tools for micropayments inside community. Project consists of database, backend and frontend part.
-Backend is HTTP server which provides REST API service to manage PirBank or connect frontend applications so only the server is talking to DB directly.
+Backend is HTTP server which provides REST API service to manage PirBanka by HTTP requests which is used by frontend applications so only the server is talking to DB directly.
 
 License: GNU GPL v3
 
