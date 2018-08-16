@@ -155,6 +155,37 @@ namespace PirBanka.Server.Responses
                     await res.SendAsync();
                 }
             )},
+            {
+                @"^/auth/identify$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    // Authorized request
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account);
+                    if (auth != null)
+                    {
+                        if (auth.account != null)
+                        {
+                            var account = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"id={auth.account}");
+                            res.Content = JsonHelper.SerializeObject(account);
+                            res.ContentType = ContentTypes.Json;
+                        }
+                        else
+                        {
+                            var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id={auth.identity}");
+                            res.Content = JsonHelper.SerializeObject(identity);
+                            res.ContentType = ContentTypes.Json;
+                        }
+                    }
+                    else
+                    {
+                        res.Content = "Unauthorized";
+                        res.StatusCode = StatusCodes.ClientError.Unauthorized;
+                        res.ContentType = ContentTypes.Html;
+                    }
+
+                    await res.SendAsync();
+                }
+            )},
             //{
             //    @"",
             //    new Action<Request, Response>( async (req, res) =>

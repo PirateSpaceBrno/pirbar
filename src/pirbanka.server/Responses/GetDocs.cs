@@ -1,5 +1,6 @@
 ﻿using JamesWright.SimpleHttp;
 using PirBanka.Server.Controllers;
+using PirBanka.Server.Models.Db;
 using PirBanka.Server.Models.Get;
 using PirBanka.Server.Models.Post;
 using PirBanka.Server.Models.Put;
@@ -36,9 +37,9 @@ namespace PirBanka.Server.Responses
                     newContent += "<pre>";
                     newContent += "request type: GET\n";
                     newContent += "endpoint: /auth/token\n";
-                    newContent += "header: Authorization with Identity access (Username and Password)\n";
+                    newContent += "header: Authorization with Identity access\n";
                     newContent += "response: application/json\n";
-                    newContent += $"response content: {JsonHelper.SerializeObject(new Token() { token = "token value", authentications_id = 0, expiration = DateTime.Now })}";
+                    newContent += $"response content: {JsonHelper.SerializeObject(new Token() { token = "token value", authentications_id = 0, expiration = DateTime.Now })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";
@@ -59,7 +60,7 @@ namespace PirBanka.Server.Responses
                     newContent += "request type: POST\n";
                     newContent += "endpoint: /identities\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesCreate() { name = "Your unique username", password = "Your password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesCreate() { name = "Your unique username", password = "Your password" })}\n";
                     newContent += "</pre>";
                     newContent += "Passwords are stored as SHA512 hash.";
                     newContent += "</p>";
@@ -84,7 +85,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/authentications\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}\n";
                     newContent += "</pre>";
                     newContent += "Password is stored as SHA512 hash.";
                     newContent += "</p>";
@@ -110,7 +111,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{identityId}/authentications/{authId}\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}\n";
                     newContent += "</pre>";
                     newContent += "Password is stored as SHA512 hash.";
                     newContent += "</p>";
@@ -144,7 +145,7 @@ namespace PirBanka.Server.Responses
                     newContent += "endpoint: /currencies\n";
                     newContent += "header: Authorization with Administrator access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesCreate() { name = "Currency display name", shortname = "Curr" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new CurrenciesCreate() { name = "Currency display name", shortname = "Curr" })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";
@@ -193,7 +194,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/accounts\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsCreate() { currencyId = 0, description = "My account" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsCreate() { currencyId = 0, description = "My account" })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";
@@ -218,7 +219,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/accounts/{accId}\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsUpdate() { description = "My account" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsUpdate() { description = "My account" })}\n";
                     newContent += "</pre>";
                     newContent += "NOTE! General account description cannot be changed.";
                     newContent += "</p>";
@@ -244,7 +245,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/accounts/{accId}/transactions\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new TransactCreate() { targetAccountIdentifier = "1/420", amount = 200 })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new TransactCreate() { targetAccountIdentifier = "1/420", amount = 200 })}\n";
                     newContent += "</pre>";
                     newContent += "Target account must be in the same currency as source account.<br />";
                     newContent += "Transaction amount cannot be bigger than source account balance.";
@@ -271,7 +272,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/accounts/{accId}/deposit\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new TransactBase() { amount = 200 })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new TransactBase() { amount = 200 })}\n";
                     newContent += "</pre>";
                     newContent += "With the deposit submitted, put equivalent funds into the bank chest.";
                     newContent += "</p>";
@@ -297,7 +298,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/accounts/{accId}/withdrawal\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new TransactBase() { amount = 200 })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new TransactBase() { amount = 200 })}\n";
                     newContent += "</pre>";
                     newContent += "With the withdrawal submitted, take equivalent funds from the bank chest.";
                     newContent += "</p>";
@@ -358,7 +359,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/markets\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsCreate() { currencyId = 0, description = "My market", password = "NFC tag, barcode, etc." })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsCreate() { currencyId = 0, description = "My market", password = "NFC tag, barcode, etc." })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";
@@ -383,7 +384,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/markets/{accId}\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsUpdate() { description = "My market" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new AccountsUpdate() { description = "My market" })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";
@@ -461,7 +462,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}/markets/{marketId}/authentications\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}\n";
                     newContent += "</pre>";
                     newContent += "Password is stored as SHA512 hash.";
                     newContent += "</p>";
@@ -488,7 +489,7 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{identityId}/markets/{marketId}/authentications/{authId}\n";
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesAuthCreate() { password = "Your new password" })}\n";
                     newContent += "</pre>";
                     newContent += "Password is stored as SHA512 hash.";
                     newContent += "</p>";
@@ -551,13 +552,119 @@ namespace PirBanka.Server.Responses
                     newContent += $"endpoint: /identities/{id}\n";
                     newContent += "header: Authorization with Administrator access\n";
                     newContent += "content type: application/json; charset=utf8\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesUpdate() { admin = false, displayName = "Display name", name = "Login" })}";
+                    newContent += $"content: {JsonHelper.SerializeObject(new IdentitiesUpdate() { admin = false, displayName = "Display name", name = "Login" })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";
 
                     res.Content = TextHelper.GetApiPage(newContent);
                     res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/auth/identify$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    string newContent = "<div>";
+                    newContent += "<h2>Get Authorization identity/account</h2>";
+                    newContent += "<p>You can see which Account or Identity is identified by provided Authentication by following authorized request:";
+                    newContent += "<pre>";
+                    newContent += "request type: GET\n";
+                    newContent += "endpoint: /auth\n";
+                    newContent += "header: Authorization with Account access\n";
+                    newContent += "response: application/json\n";
+                    newContent += "<b>Authentication is for Account:</b>\n";
+                    newContent += $"response content: {JsonHelper.SerializeObject(new AccountView() { account_identifier = "10001/1", balance = 2, currency_id = 1, id = 1, identity = 1})}\n";
+                    newContent += "<b>Authentication is for Identity:</b>\n";
+                    newContent += $"response content: {JsonHelper.SerializeObject(new Identity() { name = "Identity", display_name="Display name", id = 1})}\n";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    string newContent = "<div>";
+                    newContent += "<h2>Models returned in GET requests</h2>";
+                    newContent += "Get sample model by GET request on /doc/models/modelName.";
+                    newContent += "<pre>";
+                    newContent += "response: application/json\n";
+                    newContent += "</pre>";
+                    newContent += "</p>";
+                    newContent += "</div>";
+
+                    res.Content = TextHelper.GetApiPage(newContent);
+                    res.ContentType = ContentTypes.Html;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/identities$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new Identity() { name = "Identity", display_name="Display name", id = 1});
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/accounts$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new AccountView() { account_identifier = "10001/1", balance = 2, currency_id = 1, id = 1, identity = 1});
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/currencies$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new CurrencyView() { id=1, name = "Currency name", shortname = "TEST", rate = 0});
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/transactions$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new Transact() { id=1, amount = 100, source_account = 1, target_account = 2});
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/exchangeRates$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new ExchangeRates() {id=1, rate=0, currency=1});
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/authentications$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new Authentication() {id=1, content = "SHA512 HASH", identity=1});
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/token$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new Token() {authentications_id=1,token="TOKEN value"});
+                    res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }
             )},

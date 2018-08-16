@@ -36,7 +36,7 @@ namespace PirBanka.Server.Responses
                             "Documentation for POST/PUT/DELETE request type endpoints are reachable via GET request on the route /doc/{endpoint}, which will return HTML page." +
                             "</p>";
 
-                        newContent += SortJoinRoutes(Responses.GetDocs.Actions.Keys, "GET documentation", true);
+                        newContent += SortJoinRoutes(Responses.GetDocs.Actions.Keys, "Documentation", true);
                         newContent += SortJoinRoutes(Responses.Get.Actions.Keys, "GET");
                         newContent += SortJoinRoutes(Responses.Post.Actions.Keys, "POST");
                         newContent += SortJoinRoutes(Responses.Put.Actions.Keys, "PUT");

@@ -32,40 +32,37 @@ namespace PirBanka.Server.Controllers
 
         internal static Token CreateToken(NetworkCredential auth, Authentication authentication)
         {
-            if (auth != null && auth.Domain == "creds" && !string.IsNullOrEmpty(auth.UserName))
+            if (auth != null && authentication != null)
             {
-                if (authentication != null)
+                try
                 {
-                    try
+                    Server.db.BeginTransaction();
+
+                    Identity ident = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{auth.UserName}'");
+
+                    var token = Guid.NewGuid().ToString();
+                    var now = DateTime.Now;
+                    var expiration = now.AddMinutes(15);
+
+                    // create new token with 15 minutes expiration
+                    Authentication newToken = new Authentication()
                     {
-                        Server.db.BeginTransaction();
+                        identity = ident.id,
+                        content = TextHelper.SHA512(token),
+                        expiration = expiration,
+                        created = now
+                    };
+                    Server.db.Insert(DatabaseHelper.Tables.authentications, newToken);
+                    newToken = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"content='{TextHelper.SHA512(token)}'");
 
-                        Identity ident = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{auth.UserName}'");
+                    Server.db.CompleteTransaction();
 
-                        var token = Guid.NewGuid().ToString();
-                        var now = DateTime.Now;
-                        var expiration = now.AddMinutes(15);
-
-                        // create new token with 15 minutes expiration
-                        Authentication newToken = new Authentication()
-                        {
-                            identity = ident.id,
-                            content = TextHelper.SHA512(token),
-                            expiration = expiration,
-                            created = now
-                        };
-                        Server.db.Insert(DatabaseHelper.Tables.authentications, newToken);
-                        newToken = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"content='{TextHelper.SHA512(token)}'");
-
-                        Server.db.CompleteTransaction();
-
-                        return new Token() { token = token, expiration = expiration, authentications_id = newToken.id };
-                    }
-                    catch (Exception ex)
-                    {
-                        Server.db.AbortTransaction();
-                        Console.WriteLine(ex.Message);
-                    }
+                    return new Token() { token = token, expiration = expiration, authentications_id = newToken.id };
+                }
+                catch (Exception ex)
+                {
+                    Server.db.AbortTransaction();
+                    Console.WriteLine(ex.Message);
                 }
             }
 
