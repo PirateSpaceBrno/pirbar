@@ -21,7 +21,7 @@ namespace PirBanka.Server.Controllers
             {
                 throw new Exception("Source account does not exists.");
             }
-            if (sourceAccount.balance <= amount && !sourceAccount.description.StartsWith("outsideworld", StringComparison.InvariantCultureIgnoreCase))
+            if (sourceAccount.balance < amount && !sourceAccount.description.StartsWith("outsideworld", StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new Exception("There are no enough funds on the source account.");
             }
