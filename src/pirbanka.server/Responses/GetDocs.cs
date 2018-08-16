@@ -408,9 +408,9 @@ namespace PirBanka.Server.Responses
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
                     newContent += "<b>Buy with withdrawal:</b>\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420" })}\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "Identifier of your account", paymentToAccountIdentifier = "Identifier of market account in the same currency as payment" })}\n";
                     newContent += "<b>Buy with transfer to account:</b>\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", targetAccountIdentifier = "2/420" })}\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "Identifier of your account", paymentToAccountIdentifier = "Identifier of market account in the same currency as payment", targetAccountIdentifier = "Identifier of your account in market currency" })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";
@@ -433,9 +433,9 @@ namespace PirBanka.Server.Responses
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
                     newContent += "<b>Buy with withdrawal:</b>\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", marketPassword = "Stored market account password" })}\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "Identifier of your account", paymentToAccountIdentifier = "Identifier of market account in the same currency as payment", marketPassword = "Stored market account password" })}\n";
                     newContent += "<b>Buy with transfer to account:</b>\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", targetAccountIdentifier = "2/420", marketPassword = "Stored market account password" })}\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsBuy() { amount = 1, paymentFromAccountIdentifier = "Identifier of your account", paymentToAccountIdentifier = "Identifier of market account in the same currency as payment", targetAccountIdentifier = "Identifier of your account in market currency", marketPassword = "Stored market account password" })}\n";
                     newContent += "</pre>";
                     newContent += "This option is used to identify market account via its stored authentication - e.g. barcode, nfc tag, etc.";
                     newContent += "</p>";
@@ -525,9 +525,9 @@ namespace PirBanka.Server.Responses
                     newContent += "header: Authorization with Identity access\n";
                     newContent += "content type: application/json; charset=utf8\n";
                     newContent += "<b>Sell with deposit:</b>\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsSell() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420" })}\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsSell() { amount = 1, paymentFromAccountIdentifier = "Identifier of market account to pay", paymentToAccountIdentifier = "Identifier of your account in the same currency as payment" })}\n";
                     newContent += "<b>Sell with transfer from account:</b>\n";
-                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsSell() { amount = 1, paymentFromAccountIdentifier = "1/420", paymentToAccountIdentifier = "3/420", sourceAccountIdentifier = "2/420" })}\n";
+                    newContent += $"content: {JsonHelper.SerializeObject(new MarketsSell() { amount = 1, paymentFromAccountIdentifier = "Identifier of market account to pay", paymentToAccountIdentifier = "Identifier of your account in the same currency as payment", sourceAccountIdentifier = "Identifier of your selling account in market currency" })}\n";
                     newContent += "</pre>";
                     newContent += "</p>";
                     newContent += "</div>";

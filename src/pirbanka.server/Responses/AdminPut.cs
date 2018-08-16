@@ -48,13 +48,13 @@ namespace PirBanka.Server.Responses
 
                                 if(currency != null)
                                 {
-                                    if(currencyUpdate.name != "" && currency.name != currencyUpdate.name)
+                                    if(string.IsNullOrEmpty(currencyUpdate.name) && currency.name != currencyUpdate.name)
                                     {
                                         currency.name = currencyUpdate.name;
                                         Server.db.Update(DatabaseHelper.Tables.currencies, currency);
                                     }
 
-                                    if(currencyUpdate.shortname != "" && currency.shortname != currencyUpdate.shortname)
+                                    if(string.IsNullOrEmpty(currencyUpdate.shortname) && currency.shortname != currencyUpdate.shortname)
                                     {
                                         currency.shortname = currencyUpdate.shortname;
                                         Server.db.Update(DatabaseHelper.Tables.currencies, currency);

@@ -78,7 +78,7 @@ namespace PirBanka.Server.Responses
                 {
                     int id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/accounts$")[1];
 
-                    var result = Server.db.GetList<Account>(DatabaseHelper.Tables.accounts, $"identity={id}");
+                    var result = Server.db.GetList<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={id}");
 
                     res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
@@ -181,7 +181,7 @@ namespace PirBanka.Server.Responses
                 @"^/markets$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var result = Server.db.GetList<Account>(DatabaseHelper.Tables.accounts, $"market=1");
+                    var result = Server.db.GetList<AccountView>(DatabaseHelper.Tables.accounts_view, $"market=1");
 
                     res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
@@ -207,7 +207,7 @@ namespace PirBanka.Server.Responses
                 {
                     int id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/markets$")[1];
 
-                    var result = Server.db.GetList<Account>(DatabaseHelper.Tables.accounts, $"identity={id} AND market=1");
+                    var result = Server.db.GetList<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={id} AND market=1");
 
                     res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;

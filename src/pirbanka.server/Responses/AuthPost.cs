@@ -316,7 +316,7 @@ namespace PirBanka.Server.Responses
                         var request = await req.GetBodyAsync();
                         var requestContent = JsonHelper.DeserializeObject<MarketsCreate>(request);
 
-                        if (requestContent != null && !string.IsNullOrEmpty(requestContent.password))
+                        if (requestContent != null)
                         {
                             try
                             {
@@ -334,18 +334,20 @@ namespace PirBanka.Server.Responses
                                 Server.db.Insert(DatabaseHelper.Tables.accounts, account);
                                 account = Server.db.Get<Account>(DatabaseHelper.Tables.accounts, $"identity={id} AND market=1 AND currency_id={requestContent.currencyId}");
 
-                                Authentication authentication = new Authentication()
+                                if(!string.IsNullOrEmpty(requestContent.password))
                                 {
-                                    identity = id,
-                                    account = account.id,
-                                    content = TextHelper.SHA512(requestContent.password),
-                                    created = DateTime.Now
-                                };
+                                    Authentication authentication = new Authentication()
+                                    {
+                                        identity = id,
+                                        account = account.id,
+                                        content = TextHelper.SHA512(requestContent.password),
+                                        created = DateTime.Now
+                                    };
 
-                                Server.db.Execute("SET FOREIGN_KEY_CHECKS=0;");
-                                Server.db.Insert(DatabaseHelper.Tables.authentications, authentication);
-                                Server.db.Execute("SET FOREIGN_KEY_CHECKS=1;");
-
+                                    Server.db.Execute("SET FOREIGN_KEY_CHECKS=0;");
+                                    Server.db.Insert(DatabaseHelper.Tables.authentications, authentication);
+                                    Server.db.Execute("SET FOREIGN_KEY_CHECKS=1;");
+                                }
                                 
                                 Server.db.CompleteTransaction();
 
@@ -463,7 +465,7 @@ namespace PirBanka.Server.Responses
                                 Server.db.BeginTransaction();
 
                                 var paymentFrom = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={auth.identity} and account_identifier='{requestContent.paymentFromAccountIdentifier}'");
-                                var paymentTo = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"account_identifier='{requestContent.paymentToAccountIdentifier}'");
+                                var paymentTo = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"account_identifier='{requestContent.paymentToAccountIdentifier}' AND market=1");
 
                                 AccountView market = null;
                                 if (!string.IsNullOrEmpty(requestContent.marketPassword))
@@ -604,7 +606,7 @@ namespace PirBanka.Server.Responses
                             {
                                 Server.db.BeginTransaction();
 
-                                var paymentFrom = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"account_identifier='{requestContent.paymentFromAccountIdentifier}'");
+                                var paymentFrom = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"account_identifier='{requestContent.paymentFromAccountIdentifier}' AND market=1");
                                 var paymentTo = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={auth.identity} and account_identifier='{requestContent.paymentToAccountIdentifier}'");
                                 var market = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"id={accountId} AND market=1");
 
