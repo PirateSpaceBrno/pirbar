@@ -31,7 +31,7 @@ namespace PirBanka.Server.Responses
                     int identityId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/authentications$")[1];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         List<Authentication> result = Server.db.GetList<Authentication>(DatabaseHelper.Tables.authentications, $"identity={identityId}");
@@ -58,7 +58,7 @@ namespace PirBanka.Server.Responses
                     int authId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/authentications/(\d+)$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         Authentication result = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"identity={identityId} AND id={authId}");
@@ -82,7 +82,7 @@ namespace PirBanka.Server.Responses
                 new Action<Request, Response>( async (req, res) =>
                 {
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account);
                     if (auth != null)
                     {
                         var token = HttpAuth.CreateToken(req.UserIdentity, auth);
@@ -108,7 +108,7 @@ namespace PirBanka.Server.Responses
                     int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         List<Authentication> result = Server.db.GetList<Authentication>(DatabaseHelper.Tables.authentications, $"identity={identityId} AND account={accId}");
@@ -136,7 +136,7 @@ namespace PirBanka.Server.Responses
                     int authId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[3];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         Authentication result = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"id={authId} AND identity={identityId} AND account={accId}");

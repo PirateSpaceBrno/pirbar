@@ -32,7 +32,7 @@ namespace PirBanka.Server.Responses
                     int id = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/authentications$")[1];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, id);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, id);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -89,7 +89,7 @@ namespace PirBanka.Server.Responses
                     int id = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts$")[1];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, id);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, id);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -149,7 +149,7 @@ namespace PirBanka.Server.Responses
                     int accountId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/transactions$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -203,7 +203,7 @@ namespace PirBanka.Server.Responses
                     int accountId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/deposit$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -257,7 +257,7 @@ namespace PirBanka.Server.Responses
                     int accountId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)/withdrawal$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -310,7 +310,7 @@ namespace PirBanka.Server.Responses
                     int id = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets$")[1];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, id);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, id);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -386,7 +386,7 @@ namespace PirBanka.Server.Responses
                     int accountId = TextHelper.GetUriIds(req.Endpoint, @"^/markets/(\d+)/buy$")[1];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -452,7 +452,7 @@ namespace PirBanka.Server.Responses
                 new Action<Request, Response>( async (req, res) =>
                 {
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -530,7 +530,7 @@ namespace PirBanka.Server.Responses
                     int marketId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, id);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, id);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -594,7 +594,7 @@ namespace PirBanka.Server.Responses
                     int accountId = TextHelper.GetUriIds(req.Endpoint, @"^/markets/(\d+)/sell$")[1];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();

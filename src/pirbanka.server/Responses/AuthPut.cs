@@ -34,7 +34,7 @@ namespace PirBanka.Server.Responses
                     int authId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/authentications/(\d+)$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -96,7 +96,7 @@ namespace PirBanka.Server.Responses
                     int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/accounts/(\d+)$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -162,7 +162,7 @@ namespace PirBanka.Server.Responses
                     int accId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)$")[2];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
@@ -229,7 +229,7 @@ namespace PirBanka.Server.Responses
                     int authId = TextHelper.GetUriIds(req.Endpoint, @"^/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[3];
 
                     // Authorized request
-                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Identity, identityId);
+                    var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account, identityId);
                     if (auth != null)
                     {
                         var request = await req.GetBodyAsync();
