@@ -70,7 +70,8 @@ namespace PirBanka.Server.Responses
                                                 ExchangeRates newExchangeRate = new ExchangeRates()
                                                 {
                                                     currency = currency.id,
-                                                    rate = (decimal)currencyUpdate.exchangeRate
+                                                    rate = (decimal)currencyUpdate.exchangeRate,
+                                                    valid_since = DateTime.Now
                                                 };
 
                                                 Server.db.Insert(DatabaseHelper.Tables.exchange_rates, newExchangeRate);
