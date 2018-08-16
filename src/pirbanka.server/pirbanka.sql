@@ -87,7 +87,7 @@ CREATE TABLE `authentications` (
 CREATE TABLE `currencies` (
   `id` int(11) NOT NULL,
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL,
-  `shortname` varchar(3) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL
+  `shortname` varchar(4) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -111,7 +111,7 @@ CREATE TABLE `currencies_rates` (
 CREATE TABLE `currencies_view` (
 `id` int(11)
 ,`name` varchar(50)
-,`shortname` varchar(3)
+,`shortname` varchar(4)
 ,`valid_since` datetime
 ,`rate` decimal(36,18)
 );
@@ -164,7 +164,7 @@ CREATE TABLE `transactions` (
 --
 DROP TABLE IF EXISTS `accounts_balances`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `accounts_balances`  AS  select `a`.`target_account` AS `id`,(sum(`a`.`amount`) - `b`.`amount`) AS `balance` from (`transactions` `a` join (select sum(`transactions`.`amount`) AS `amount`,`transactions`.`source_account` AS `source_account` from `transactions` group by `transactions`.`source_account`) `b` on((`b`.`source_account` = `a`.`target_account`))) group by `a`.`target_account` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `accounts_balances`  AS  select `b`.`target_account` AS `id`,sum(`b`.`amount`) AS `balance` from (select sum(`transactions`.`amount`) AS `amount`,`transactions`.`target_account` AS `target_account` from `transactions` group by `transactions`.`target_account` union all select (sum(`transactions`.`amount`) * -(1)) AS `amount`,`transactions`.`source_account` AS `source_account` from `transactions` group by `transactions`.`source_account`) `b` group by `b`.`target_account` ;
 
 -- --------------------------------------------------------
 
