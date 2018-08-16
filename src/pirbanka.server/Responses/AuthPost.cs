@@ -332,7 +332,7 @@ namespace PirBanka.Server.Responses
                                 };
                                 
                                 Server.db.Insert(DatabaseHelper.Tables.accounts, account);
-                                account = Server.db.Get<Account>(DatabaseHelper.Tables.accounts, $"identity={id}");
+                                account = Server.db.Get<Account>(DatabaseHelper.Tables.accounts, $"identity={id} AND market=1 AND currency_id={requestContent.currencyId}");
 
                                 Authentication authentication = new Authentication()
                                 {

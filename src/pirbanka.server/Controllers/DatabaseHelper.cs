@@ -55,7 +55,7 @@ namespace PirBanka.Server.Controllers
             if (!string.IsNullOrEmpty(where)) query += $" WHERE {where}";
             query += ";";
 
-            return db.SingleOrDefault<T>(query);
+            return db.Query<T>(query).FirstOrDefault();
         }
 
         public List<T> GetList<T>(Tables tableName, string where = "") where T : class, new()
