@@ -28,7 +28,7 @@ namespace PirBanka.Server.Responses
                 @"^/currencies$",
                 new Action<Request, Response>( async (req, res) =>
                 {
-                    var result = Server.db.GetList<Currency>(DatabaseHelper.Tables.currencies);
+                    var result = Server.db.GetList<CurrencyView>(DatabaseHelper.Tables.currencies_view);
 
                     res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;
