@@ -11,7 +11,7 @@ namespace PirBanka.Server.Controllers
         public static AccountView BankOutSideWorldAccount(Currency currency)
         {
             if(currency == null) { return null; }
-            var result = Server.db.GetList<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={BankIdentity.id} AND currency={currency.id}");
+            var result = Server.db.GetList<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={BankIdentity.id} AND currency_id={currency.id}");
             return result.FirstOrDefault(x => x.description.StartsWith("outsideworld", System.StringComparison.InvariantCultureIgnoreCase));
         }
 
