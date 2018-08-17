@@ -1,0 +1,95 @@
+﻿@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,600&subset=latin-ext');
+
+body {
+    padding: 0;
+    margin: 0;
+    background: #2c3e50;
+    color: #ecf0f1;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+}
+
+#header {
+    height: 80px;
+    background: #2c3e50;
+    position: relative;
+}
+
+    #header #magicEye {
+        height: 80px;
+        width: 80px;
+        position: absolute;
+        left: 30px;
+        top: 5px;
+        border: none;
+    }
+
+    #header #identityName {
+        position: absolute;
+        top: 30px;
+        left: 110px;
+        font-size: 1.4em;
+        font-weight: 600;
+        color: #ecf0f1;
+    }
+
+#header #clock {
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    margin-left: -50px;
+    width: 100px;
+    font-size: 2em;
+}
+
+#header #logo {
+    position: absolute;
+    right: 40px;
+    top: 20px;
+}
+
+
+#authenticate {
+    width: 600px;
+    margin: auto;
+    margin-top: 80px;
+    padding: 40px 60px 40px 60px;
+    font-size: 3.5em;
+    color: #ffffff;
+    background: #3498db;
+    text-align: right;
+    cursor: pointer;
+}
+
+#authenticate .icon {
+    height: 70px;
+    line-height: 3em;
+    float: left;
+}
+
+#authenticate .title {
+    margin-top: -20px;
+}
+
+#authenticate .help {
+    font-size: 0.35em;
+    padding-top: 5px;
+}
+
+#kiosk {
+    width: 600px;
+    margin: auto;
+    margin-top: 100px;
+    padding: 40px 60px 40px 60px;
+    font-size: 3.5em;
+    color: #ffffff;
+    background: #8e44ad;
+    text-align: right;
+    cursor: pointer;
+}
+
+#kiosk .icon {
+    height: 80px;
+    line-height: 3em;
+    float: left;
+}

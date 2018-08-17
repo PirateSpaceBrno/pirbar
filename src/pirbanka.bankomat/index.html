@@ -1,0 +1,54 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Ondřej Kotas, Pirate Space Brno">
+    <meta name="description" content="PirBanka">
+
+    <title>PirBankomat</title>
+
+    <link href="style.css" rel="stylesheet" type="text/css" media="screen,projection" />
+    <link href="status.css" rel="stylesheet" type="text/css" media="screen,projection" />
+    <link href="images/pirbanka_icon.svg" rel="icon" />
+
+    <script type="text/javascript" src="scripts/clock.js"></script>
+    <script type="text/javascript" src="scripts/jquery-3.3.1.min.js"></script>
+
+    <!-- Capture keystrokes -->
+    <script type="text/javascript" src="scripts/tokenListener.js"></script>
+
+    <!-- Load PirBanka methods -->
+    <script type="text/javascript" src="scripts/pirbanka.js"></script>
+</head>
+
+<body onload="startTime()">
+    <div id="header">
+        <div id="magicEye">
+            <div class="plane main">
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+                <div class="circle"></div>
+            </div>
+        </div>
+        <div id="identityName">PirBanka - Pirate Space Brno</div>
+        <div id="clock"></div>
+        <img src="images/pirbankomat.svg" alt="logo" id="logo" />
+    </div>
+
+    <div id="authenticate" onclick="javascript: changeStatus('blue', 5000);">
+        <img src="images/secure.svg" alt="" class="icon" />
+        <div class="title">Autorizovaný přístup</div>
+        <div class="help">Autorizuj se přiložením karty nebo pomocí hesla</div>
+    </div>
+
+    <div id="kiosk" onclick="javascript: changeStatus('purple', 5000);">
+        <img src="images/kiosk.svg" alt="" class="icon" />
+        <div class="title">Veřejný přístup</div>
+    </div>
+
+    <div id="token"></div>
+</body>
+</html>

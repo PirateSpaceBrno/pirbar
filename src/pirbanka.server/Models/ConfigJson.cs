@@ -14,9 +14,6 @@ namespace PirBanka.Server.Models
         public string instanceName { get; set; }
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public string instanceDescription { get; set; }
-
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public string databaseServer { get; set; }
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]

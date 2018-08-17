@@ -26,7 +26,6 @@ namespace PirBanka.Server.Controllers
         public string ListenGateway => _config.listenGateway;
         public int ListenPort => _config.listenPort;
         public string InstanceName => _config.instanceName;
-        public string InstanceDescription => _config.instanceDescription;
         public string DatabaseServer => _config.databaseServer;
         public string DatabaseServerPort => _config.databaseServerPort;
         public string DatabaseName => _config.databaseName;
@@ -46,9 +45,6 @@ namespace PirBanka.Server.Controllers
             var name = Console.ReadLine();
             if (String.IsNullOrEmpty(name)) name = "PirBanka";
             newConfig.instanceName = name;
-
-            Console.WriteLine("Set your instance description:");
-            newConfig.instanceDescription = Console.ReadLine();
 
             Console.WriteLine("Set IP to listen for HTTP requests (default localhost):");
             var gateway = Console.ReadLine();
