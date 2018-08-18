@@ -42,9 +42,18 @@ namespace PirBanka.Server.Controllers
         {
             HtmlDocument doc = new HtmlDocument();
             doc.Load($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}api-docs{Path.DirectorySeparatorChar}index.html");
+
             HtmlNode newNode = HtmlNode.CreateNode(content);
+            newNode.InnerHtml.Replace("PirBanka", Server.config.InstanceName);
             doc.DocumentNode.SelectSingleNode("//body").AppendChild(newNode);
-            return doc.DocumentNode.InnerHtml.Replace("PirBanka", Server.config.InstanceName);
+
+            var buildDate = PirBanka.Server.AssemblyInfo.Date;
+            var buildVersion = new Version(buildDate.Year, buildDate.Month, buildDate.Day, Convert.ToInt32(buildDate.TimeOfDay.TotalSeconds));
+            var version = $"<div id=\"version\">PirBanka - API service | pirbanka.server.{buildVersion}</div>";
+            HtmlNode versionElem = HtmlNode.CreateNode(version);
+            doc.DocumentNode.SelectSingleNode("//body").AppendChild(versionElem);
+
+            return doc.DocumentNode.InnerHtml;
         }
 
         internal static List<int> GetUriIds(string request, string regex)

@@ -571,7 +571,7 @@ namespace PirBanka.Server.Responses
                     newContent += "<p>You can see which Account or Identity is identified by provided Authentication by following authorized request:";
                     newContent += "<pre>";
                     newContent += "request type: GET\n";
-                    newContent += "endpoint: /auth\n";
+                    newContent += "endpoint: /auth/identify\n";
                     newContent += "header: Authorization with Account access\n";
                     newContent += "response: application/json\n";
                     newContent += "<b>Authentication is for Account:</b>\n";

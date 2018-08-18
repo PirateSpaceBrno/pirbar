@@ -1,8 +1,15 @@
-﻿body {
+﻿@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,600&subset=latin-ext');
+
+body {
     background: #225a85;
     color: #ffffff;
     padding: 40px;
-    font-family: sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+}
+
+b, h1, h2, h3, h4 {
+    font-weight: 600;
 }
 
 a:link, a:visited {
@@ -18,4 +25,18 @@ a:hover {
 pre {
     padding: 0;
     margin: 5px 0 30px 20px;
+}
+
+#version {
+    height: 40px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: #ffffff;
+    color: #225a85;
+    font-size: 0.75em;
+    line-height: 40px;
+    padding: 0 20px 0 20px;
+    text-align: right;
+    font-weight: 600;
 }

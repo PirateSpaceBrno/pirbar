@@ -52,6 +52,8 @@ namespace PirBanka.Server.Responses
 
                         newContent += "</div>";
 
+
+
                         res.Content = TextHelper.GetApiPage(newContent);
                         res.ContentType = ContentTypes.Html;
                         await res.SendAsync();
