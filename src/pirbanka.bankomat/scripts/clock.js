@@ -27,7 +27,7 @@
         }
 
         window.expirateSec = window.expirateSec - 1;
-        //console.log("Session expire in " + window.expirateSec + " sec.");
+        console.log("Session expire in " + window.expirateSec + " sec.");
     }
 
     // Set trigger to next second

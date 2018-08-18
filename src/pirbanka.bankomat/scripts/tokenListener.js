@@ -2,6 +2,9 @@
 // scanner attached via USB
 keyDownHandler = function keyDownHandler(e) {
     //$('*').bind("keydown", function (e) {
+
+    //expireSession();
+
     if (window.catchToken == true) {
         var token = window.token;
 
@@ -11,6 +14,7 @@ keyDownHandler = function keyDownHandler(e) {
         // See the "keyboardCharMap", below, for printable characters.  
         // MODIFY keyboardCharMap to suit your needs if you want 
         //    more/less/different characters to be considered "printable".
+
         var iCol = 0;
         if (e.shiftKey) {
             iCol = 1;
@@ -33,12 +37,11 @@ keyDownHandler = function keyDownHandler(e) {
             if (!token.is(":focus")) {
                 token.val(token.val() + ch);
             }
-
         }
     }
 //});
 }
-document.onkeydown = keyDownHandler;
+//document.onkeydown = keyDownHandler;
 
 // names of known key codes (0-255)
 var keyboardNameMap = [

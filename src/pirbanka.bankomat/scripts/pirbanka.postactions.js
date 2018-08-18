@@ -8,9 +8,7 @@ LoadingScreen
     });
 
 
-// Set Token catcher
-window.token = Token;
-window.catchToken = true;
+
 $("body").focus();
 
 

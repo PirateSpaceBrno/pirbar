@@ -1,24 +1,31 @@
 ﻿var pirbankaEndpoint = "http://api.pirbanka.psb";
 
 function identifyAuth(token) {
-    var json = '';
+    try {
+        var json = '';
 
-    $.ajaxSetup({
-        headers: {
-            'Authorization': "TOKEN " + token,
-        }
-    });
+        console.log(token);
 
-    $.get(pirbankaEndpoint + "/auth/identify", function (data) {
-        console.log(data);
-    }, 'json');
+        var myHeaders = new Headers();
 
-    if (json === "") {
-        console.log("err");
-        changeStatus("red", 5000);
+        // jQuery
+        json = $.ajax({
+            url: pirbankaEndpoint + "/auth/identify",
+            method: 'GET',
+            beforeSend: function (req) {
+                req.setRequestHeader('Authorization', 'TOKEN ' + token);
+            },
+            success: function (data) {
+                return data.getResponseHeader;
+            },
+            error: function (data) {
+                console.log("err - " + data);
+            }
+        });
+
+        console.log(json);
     }
-    else {
-        console.log("succ");
-        changeStatus("green", 5000);
+    catch (ex) {
+        console.log(ex);
     }
 }
