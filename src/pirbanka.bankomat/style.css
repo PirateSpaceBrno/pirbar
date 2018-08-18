@@ -1,37 +1,52 @@
 ﻿@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,600&subset=latin-ext');
 
+:root {
+    --greenDark: #27ae60;
+    --greenLight: #2ecc71;
+    --blueDark: #2980b9;
+    --blueLight: #3498db;
+    --redDark: #c0392b;
+    --redLight: #e74c3c;
+    --grayDark: #2c3e50;
+    --grayLight: #7f8c8d;
+    --purpleDark: #8e44ad;
+    --purpleLight: #9b59b6;
+    --white: #ffffff;
+    --yellow: #f1c40f;
+}
+
 body {
     padding: 0;
     margin: 0;
-    background: #2c3e50;
-    color: #ecf0f1;
+    background: var(--grayDark);
+    color: var(--white);
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 300;
 }
 
 #header {
     height: 80px;
-    background: #2c3e50;
     position: relative;
+    z-index: 1000;
 }
 
-    #header #magicEye {
-        height: 80px;
-        width: 80px;
-        position: absolute;
-        left: 30px;
-        top: 5px;
-        border: none;
-    }
+#header #magicEye {
+    height: 80px;
+    width: 80px;
+    position: absolute;
+    left: 30px;
+    top: 5px;
+    border: none;
+}
 
-    #header #identityName {
-        position: absolute;
-        top: 30px;
-        left: 110px;
-        font-size: 1.4em;
-        font-weight: 600;
-        color: #ecf0f1;
-    }
+#header #identityName {
+    position: absolute;
+    top: 30px;
+    left: 110px;
+    font-size: 1.4em;
+    font-weight: 600;
+    color: var(--white);
+}
 
 #header #clock {
     position: absolute;
@@ -40,6 +55,19 @@ body {
     margin-left: -50px;
     width: 100px;
     font-size: 2em;
+    text-align: center;
+    transition: color linear .5s;
+}
+
+#header #clockNote {
+    position: absolute;
+    top: 65px;
+    left: 50%;
+    margin-left: -125px;
+    width: 250px;
+    font-size: 0.8em;
+    text-align: center;
+    transition: visibility 0s, opacity 0.5s linear;
 }
 
 #header #logo {
@@ -48,48 +76,161 @@ body {
     top: 20px;
 }
 
-
-#authenticate {
-    width: 600px;
-    margin: auto;
-    margin-top: 80px;
-    padding: 40px 60px 40px 60px;
-    font-size: 3.5em;
-    color: #ffffff;
-    background: #3498db;
-    text-align: right;
-    cursor: pointer;
+#authPage, #kioskPage {
+    position: relative;
 }
 
-#authenticate .icon {
+#resultNote {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.8em;
+    line-height: 1.8em;
+    font-weight: 600;
+    color: var(--white);
+}
+
+#loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--grayDark);
+    z-index: 900;
+    transition: visibility 0s, opacity 0.5s linear;
+    visibility: hidden;
+    opacity: 0;
+}
+
+#loading .sk-fading-circle {
+    margin: 400px auto;
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+
+#authPage div.authenticate div.init {
+    width: 600px;
+    height: 80px;
+    margin: auto;
+    position: relative;
+    top: 150px;
+    padding: 40px 60px 40px 60px;
+    font-size: 3.5em;
+    color: var(--white);
+    background: var(--blueDark);
+    text-align: right;
+    cursor: pointer;
+    z-index: 100;
+}
+
+
+#authPage div.authenticate:hover div.init {
+    background: var(--blueLight);
+}
+
+#authPage div.authenticate img.icon {
     height: 70px;
     line-height: 3em;
     float: left;
 }
 
-#authenticate .title {
+#authPage div.authenticate div.title {
     margin-top: -20px;
 }
 
-#authenticate .help {
+#authPage div.authenticate div.help {
     font-size: 0.35em;
     padding-top: 5px;
 }
 
-#kiosk {
+#authPage div.pass {
+    width: 720px;
+    margin: auto;
+    position: relative;
+    top: 110px;
+    padding: 0;
+    color: var(--white);
+    background: var(--blueDark);
+    transition: all ease-in-out .5s;
+    z-index: 99;
+}
+
+#authPage div.pass input[type=password] {
+    width: 500px;
+    height: 20px;
+    resize: none;
+    font-size: 1em;
+    float: left;
+    padding: 10px;
+    border: none;
+    /*background: rgba(0, 0, 0, 0);*/
+    background: var(--white);
+    color: var(--blueDark);
+}
+
+#authPage div.pass a.cancel, #authPage div.pass a.ok {
+    width: 80px;
+    height: 20px;
+    float: right;
+    padding: 10px;
+    
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+    font-size: 1em;
+    color: var(--white);
+    text-align: center;
+}
+
+#authPage div.pass a.cancel {
+    background: var(--redDark);
+}
+
+#authPage div.pass a.cancel:hover {
+    background: var(--redLight);
+}
+
+#authPage div.pass a.ok {
+    background: var(--greenDark);
+}
+
+#authPage div.pass a.ok:hover {
+    background: var(--greenLight);
+}
+
+#authPage div.kiosk {
     width: 600px;
     margin: auto;
-    margin-top: 100px;
+    position: relative;
+    top: 300px;
     padding: 40px 60px 40px 60px;
     font-size: 3.5em;
-    color: #ffffff;
-    background: #8e44ad;
+    color: var(--white);
+    background: var(--purpleDark);
     text-align: right;
     cursor: pointer;
 }
 
-#kiosk .icon {
+
+#authPage div.kiosk:hover {
+    background: var(--purpleLight);
+}
+
+#authPage div.kiosk .icon {
     height: 80px;
     line-height: 3em;
     float: left;
+}
+
+#jq-keyboard {
+    z-index: 9000;
+}
+
+#kioskPage {
+    visibility: hidden;
+    opacity: 0;
+
 }

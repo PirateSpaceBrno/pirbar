@@ -1,32 +1,43 @@
-﻿
-// This catches keys from a physical keyboard, a soft keyboard on a tablet, or a
+﻿// This catches keys from a physical keyboard, a soft keyboard on a tablet, or a
 // scanner attached via USB
 keyDownHandler = function keyDownHandler(e) {
-    var token = document.getElementById("token");
-    // keyboardCharMap is an array of arrays, with each inner
-    // array having 2 columns - un-shifted, and shifted values.
-    // iCol = 0 is the un-shifted value, while iCol=1 is the shifted value.
-    // See the "keyboardCharMap", below, for printable characters.  
-    // MODIFY keyboardCharMap to suit your needs if you want 
-    //    more/less/different characters to be considered "printable".
-    var iCol = 0;
-    if (e.shiftKey) {
-        iCol = 1;
-    }
-    var ch = keyboardCharMap[e.keyCode][iCol];
+    //$('*').bind("keydown", function (e) {
+    if (window.catchToken == true) {
+        var token = window.token;
 
-    //console.log("'"+ch+"'" + " = " + e.keyCode);
+        // keyboardCharMap is an array of arrays, with each inner
+        // array having 2 columns - un-shifted, and shifted values.
+        // iCol = 0 is the un-shifted value, while iCol=1 is the shifted value.
+        // See the "keyboardCharMap", below, for printable characters.  
+        // MODIFY keyboardCharMap to suit your needs if you want 
+        //    more/less/different characters to be considered "printable".
+        var iCol = 0;
+        if (e.shiftKey) {
+            iCol = 1;
+        }
+        var ch = keyboardCharMap[e.keyCode][iCol];
 
-    if (e.keyCode == 13) {
-        console.log(token.innerHTML);
-        identifyAuth(token.innerHTML);
-        token.innerHTML = '';
+        //console.log("'" + ch + "'" + " = " + e.keyCode);
+
+        if (e.keyCode == 13) {
+            //alert(token.val());
+            identifyAuth(token.val());
+            token.val('');
+        }
+        else if (e.keyCode == 8) {
+            if (!token.is(":focus"))
+                token.val(token.val().slice(0, -1));
+        }
+        else if (ch === "") { }
+        else {
+            if (!token.is(":focus")) {
+                token.val(token.val() + ch);
+            }
+
+        }
     }
-    else if (ch === "") {}
-    else {
-        token.innerHTML = token.innerHTML + ch;
-    }
-};
+//});
+}
 document.onkeydown = keyDownHandler;
 
 // names of known key codes (0-255)
