@@ -568,7 +568,7 @@ namespace PirBanka.Server.Responses
                 {
                     string newContent = "<div>";
                     newContent += "<h2>Get Authorization identity/account</h2>";
-                    newContent += "<p>You can see which Account or Identity is identified by provided Authentication by following authorized request:";
+                    newContent += "<p>You can see which Market or Identity is identified by provided Authentication by following authorized request:";
                     newContent += "<pre>";
                     newContent += "request type: GET\n";
                     newContent += "endpoint: /auth/identify\n";

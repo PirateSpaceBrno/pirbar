@@ -6,7 +6,7 @@ namespace PirBanka.Server.Controllers
 {
     internal static class PirBankaHelper
     {
-        public static Identity BankIdentity => Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"display_name='{Server.config.InstanceName}'");
+        public static Identity BankIdentity => Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id=1");
         public static CurrencyView GeneralCurrency => Server.db.GetList<CurrencyView>(DatabaseHelper.Tables.currencies_view).FirstOrDefault();
         public static AccountView BankOutSideWorldAccount(Currency currency)
         {

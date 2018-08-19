@@ -1618,6 +1618,7 @@ namespace PetaPoco
 
                         cmd.CommandText = string.Format("UPDATE {0} SET {1} WHERE {2} = {3}{4}",
                             _provider.EscapeTableName(tableName), sb.ToString(), _provider.EscapeSqlIdentifier(primaryKeyName), _paramPrefix, index++);
+                            //tableName, sb.ToString(), primaryKeyName, _paramPrefix, index++);
                         AddParam(cmd, primaryKeyValue, pkpi);
 
                         DoPreExecute(cmd);

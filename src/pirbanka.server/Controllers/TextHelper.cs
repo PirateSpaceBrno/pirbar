@@ -44,7 +44,6 @@ namespace PirBanka.Server.Controllers
             doc.Load($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}api-docs{Path.DirectorySeparatorChar}index.html");
 
             HtmlNode newNode = HtmlNode.CreateNode(content);
-            newNode.InnerHtml.Replace("PirBanka", Server.config.InstanceName);
             doc.DocumentNode.SelectSingleNode("//body").AppendChild(newNode);
 
             var buildDate = PirBanka.Server.AssemblyInfo.Date;
@@ -75,5 +74,7 @@ namespace PirBanka.Server.Controllers
 
             return result;
         }
+
+
     }
 }

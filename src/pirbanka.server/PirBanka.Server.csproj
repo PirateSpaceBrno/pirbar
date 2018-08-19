@@ -76,6 +76,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Get\Balance.cs" />
+    <Compile Include="Models\Get\Status.cs" />
     <Compile Include="Models\MySqlConnectionString.cs" />
     <Compile Include="Models\PetaPoco.cs" />
     <Compile Include="Models\Post\Markets.Sell.cs" />

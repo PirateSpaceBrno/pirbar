@@ -1,6 +1,7 @@
 ﻿using JamesWright.SimpleHttp;
 using PirBanka.Server.Controllers;
 using PirBanka.Server.Models.Db;
+using PirBanka.Server.Models.Get;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -222,6 +223,62 @@ namespace PirBanka.Server.Responses
                     int account_id = TextHelper.GetUriIds(req.Endpoint,  @"^/identities/(\d+)/markets/(\d+)$")[2];
 
                     var result = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"identity={id} and id={account_id} and market=1");
+
+                    res.Content = JsonHelper.SerializeObject(result);
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/ping$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject("pong");
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/status$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(new Status());
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/bank$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    var result = PirBankaHelper.BankIdentity;
+
+                    res.Content = JsonHelper.SerializeObject(result);
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/bank/balances$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    var allAccount = Server.db.GetList<AccountView>(DatabaseHelper.Tables.accounts_view);
+                    var cashAccounts = allAccount.Where(x => x.identity == PirBankaHelper.BankIdentity.id && x.description.StartsWith("outside", StringComparison.InvariantCultureIgnoreCase)).ToList();
+                    var creditAccounts = allAccount.Where(x => !x.description.StartsWith("outside", StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+                    List<Balance> result = new List<Balance>();
+
+                    foreach(AccountView cashAccount in cashAccounts)
+                    {
+                        Balance balance = new Balance()
+                        {
+                            currency = Server.db.Get<Currency>(DatabaseHelper.Tables.currencies, $"id={cashAccount.currency_id}"),
+                            chestBalance = cashAccount.balance * (-1),
+                            creditBalance = creditAccounts.Where(x => x.currency_id == cashAccount.currency_id).Select(x => x.balance).Sum()
+                        };
+
+                        result.Add(balance);
+                    }
 
                     res.Content = JsonHelper.SerializeObject(result);
                     res.ContentType = ContentTypes.Json;

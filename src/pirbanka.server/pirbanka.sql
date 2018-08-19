@@ -233,9 +233,7 @@ ALTER TABLE `exchange_rates`
 -- Klíče pro tabulku `identities`
 --
 ALTER TABLE `identities`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`),
-  ADD UNIQUE KEY `display_name` (`display_name`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Klíče pro tabulku `transactions`

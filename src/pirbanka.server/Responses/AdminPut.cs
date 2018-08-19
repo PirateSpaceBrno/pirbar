@@ -147,7 +147,7 @@ namespace PirBanka.Server.Responses
                                     if(!string.IsNullOrEmpty(requestContent.name))
                                         identity.name = requestContent.name;
 
-                                    Server.db.Update(DatabaseHelper.Tables.accounts, identity);
+                                    Server.db.Update(DatabaseHelper.Tables.identities, identity);
 
                                     Server.db.CompleteTransaction();
 

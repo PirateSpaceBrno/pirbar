@@ -25,7 +25,6 @@ namespace PirBanka.Server.Controllers
 
         public string ListenGateway => _config.listenGateway;
         public int ListenPort => _config.listenPort;
-        public string InstanceName => _config.instanceName;
         public string DatabaseServer => _config.databaseServer;
         public string DatabaseServerPort => _config.databaseServerPort;
         public string DatabaseName => _config.databaseName;
@@ -44,7 +43,6 @@ namespace PirBanka.Server.Controllers
             Console.WriteLine("Set your instance name (default PirBanka):");
             var name = Console.ReadLine();
             if (String.IsNullOrEmpty(name)) name = "PirBanka";
-            newConfig.instanceName = name;
 
             Console.WriteLine("Set IP to listen for HTTP requests (default localhost):");
             var gateway = Console.ReadLine();
@@ -144,12 +142,12 @@ namespace PirBanka.Server.Controllers
 
                         Identity bankIdentity = new Identity()
                         {
-                            name = TextHelper.RemoveSpecialCharacters(newConfig.instanceName),
-                            display_name = newConfig.instanceName,
+                            name = TextHelper.RemoveSpecialCharacters(name),
+                            display_name = name,
                             created = DateTime.Now
                         };
                         database.Insert(DatabaseHelper.Tables.identities, bankIdentity);
-                        bankIdentity = database.Get<Identity>(DatabaseHelper.Tables.identities, $"display_name='{newConfig.instanceName}'");
+                        bankIdentity = database.Get<Identity>(DatabaseHelper.Tables.identities, $"display_name='{name}'");
                         Console.Write(".");
 
                         Identity admin = new Identity()

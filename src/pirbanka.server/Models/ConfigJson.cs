@@ -11,9 +11,6 @@ namespace PirBanka.Server.Models
         public int listenPort { get; set; }
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public string instanceName { get; set; }
-
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public string databaseServer { get; set; }
 
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]

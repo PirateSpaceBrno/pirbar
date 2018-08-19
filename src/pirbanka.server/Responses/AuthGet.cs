@@ -166,8 +166,18 @@ namespace PirBanka.Server.Responses
                         if (auth.account != null)
                         {
                             var account = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"id={auth.account}");
-                            res.Content = JsonHelper.SerializeObject(account);
-                            res.ContentType = ContentTypes.Json;
+
+                            if (account != null && account.market)
+                            {
+                                res.Content = JsonHelper.SerializeObject(account);
+                                res.ContentType = ContentTypes.Json;
+                            }
+                            else
+                            {
+                                var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id={auth.identity}");
+                                res.Content = JsonHelper.SerializeObject(identity);
+                                res.ContentType = ContentTypes.Json;
+                            }
                         }
                         else
                         {

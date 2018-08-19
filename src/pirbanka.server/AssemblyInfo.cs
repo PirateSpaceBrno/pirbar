@@ -51,5 +51,15 @@ namespace PirBanka.Server
 
             return linkTimeUtc;
         }
+
+        internal static string Version
+        {
+            get
+            {
+                var buildDate = PirBanka.Server.AssemblyInfo.Date;
+                var buildVersion = new Version(buildDate.Year, buildDate.Month, buildDate.Day, Convert.ToInt32(buildDate.TimeOfDay.TotalSeconds));
+                return $"pirbanka.server.{buildVersion}";
+            }
+        }
     }
 }
