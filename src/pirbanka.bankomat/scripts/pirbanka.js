@@ -1,25 +1,28 @@
 ﻿var pirbankaEndpoint = "http://api.pirbanka.psb";
+var json = '';
 
-function identifyAuth(token) {
+function IdentifyAuth(token) {
     try {
         var json = '';
 
-        console.log(token);
-
-        var myHeaders = new Headers();
+        //console.log(token);
 
         // jQuery
-        json = $.ajax({
+        $.ajax({
+            type: "GET",
             url: pirbankaEndpoint + "/auth/identify",
-            method: 'GET',
-            beforeSend: function (req) {
-                req.setRequestHeader('Authorization', 'TOKEN ' + token);
+            accept: "application/json",
+            beforeSend: function (xhr) {
+                //xhr.setRequestHeader("Authorization", "Basic " + btoa("xxxxxxx:yyyyyyyy"));
+                xhr.setRequestHeader('Authorization', 'TOKEN ' + token);
             },
-            success: function (data) {
-                return data.getResponseHeader;
+            contentType: "application/json",
+            dataType: "jsonp",
+            success: function (data, textStatus, jqXHR) {
+                console.log("succ");
             },
-            error: function (data) {
-                console.log("err - " + data);
+            error: function (error) {
+                console.log("fail");
             }
         });
 
@@ -28,4 +31,27 @@ function identifyAuth(token) {
     catch (ex) {
         console.log(ex);
     }
+}
+
+function GetServerStatus() {
+    var path = pirbankaEndpoint + "/status";
+
+    console.log(path);
+
+    $.getJSON(path, function (obj) {
+        window.serverStatus = obj;
+    });
+}
+
+
+function GetIdentities() {
+    var path = pirbankaEndpoint + "/identities";
+
+    console.log(path);
+
+    $.get(path, function (resp, stat) {
+        json = resp;
+    });
+
+    console.log(json);
 }

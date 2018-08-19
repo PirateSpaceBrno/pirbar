@@ -25,7 +25,7 @@ keyDownHandler = function keyDownHandler(e) {
 
         if (e.keyCode == 13) {
             //alert(token.val());
-            identifyAuth(token.val());
+            IdentifyAuth(token.val());
             token.val('');
         }
         else if (e.keyCode == 8) {
