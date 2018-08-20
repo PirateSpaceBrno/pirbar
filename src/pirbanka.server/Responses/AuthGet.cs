@@ -1,6 +1,7 @@
 ﻿using JamesWright.SimpleHttp;
 using PirBanka.Server.Controllers;
 using PirBanka.Server.Models.Db;
+using PirBanka.Server.Models.Get;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,28 +164,23 @@ namespace PirBanka.Server.Responses
                     var auth = HttpAuth.AuthenticateHttpRequest(req.UserIdentity, HttpAuth.AccessLevel.Account);
                     if (auth != null)
                     {
+                        AccountView account = null;
+
                         if (auth.account != null)
                         {
-                            var account = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"id={auth.account}");
+                            account = Server.db.Get<AccountView>(DatabaseHelper.Tables.accounts_view, $"id={auth.account}");
+                        }
+                        
+                        var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id={auth.identity}");
 
-                            if (account != null && account.market)
-                            {
-                                res.Content = JsonHelper.SerializeObject(account);
-                                res.ContentType = ContentTypes.Json;
-                            }
-                            else
-                            {
-                                var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id={auth.identity}");
-                                res.Content = JsonHelper.SerializeObject(identity);
-                                res.ContentType = ContentTypes.Json;
-                            }
-                        }
-                        else
+                        var result = new Identify()
                         {
-                            var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id={auth.identity}");
-                            res.Content = JsonHelper.SerializeObject(identity);
-                            res.ContentType = ContentTypes.Json;
-                        }
+                            identity = identity,
+                            account = account
+                        };
+
+                        res.Content = JsonHelper.SerializeObject(result);
+                        res.ContentType = ContentTypes.Json;
                     }
                     else
                     {

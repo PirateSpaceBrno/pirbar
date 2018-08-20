@@ -11,6 +11,13 @@ var ResultNote = $("#resultNote");
 var LoadingClearing = $("#loadingClearing");
 var LoadingError = $("#loadingError");
 var IdentityName = $("#identityName");
+var Screens = $("div.screen");
+
+var Stats = $("#bankStats");
+var StatsVersion = $("#bankVersion");
+var StatsIdentitiesCount = $("#identitiesCount");
+var StatsAccountsCount = $("#accountsCount");
+var StatsMarketsCount = $("#marketsCount");
 
 var CatchToken = true;
 

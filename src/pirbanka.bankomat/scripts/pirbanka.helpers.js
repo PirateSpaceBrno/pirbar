@@ -37,19 +37,6 @@ function hideElem(elem) {
     return elem;
 }
 
-// Method to switch page
-function switchPage(from, to, color) {
-    showElem(LoadingScreen).delay(1000).queue(function () {
-        //hideElem(from);
-        from.hide();
-        changeStatus(color);
-        to.show();
-        //showElem(to);
-        //LoadingScreen.css("transition", "visibility 0.5s, opacity 0.5s linear");
-        hideElem(LoadingScreen);
-        LoadingScreen.dequeue();
-    });//.css("transition", "visibility 0s, opacity 0.5s linear");
-}
 
 // 
 function changeStatus(color, delay = 0) {
@@ -71,11 +58,86 @@ function changeStatus(color, delay = 0) {
     }
 }
 
-function changeText(elem, text) {
-    elem.fadeOut(function () {
-        $(this).text(text).fadeIn(50);
+function changeText(elem, text, color='') {
+    elem.delay(450).fadeOut(function () {
+        if (color != '') {
+            $(this).css("color", "var(--" + color + ")");
+        }
+        else {
+            $(this).css("color", "var(--white)");
+        }
+        $(this).text(text).fadeIn(500);
     });
 }
 
+function authShowPasswordInput() {
+    $('#authPage div.pass').css('top', '150px');
+    $('#token').val('');
+    showVirtKeyboard();
+    $('#token').focus();
+}
+
+function authHidePasswordInput() {
+    $('#authPage div.pass').css('top', '110px');
+    $('#token').val('');
+    $('body').focus();
+    hideVirtKeyboard();
+}
+
+// gt sderver status, if no konkšun, den resultonte to error mesidž a no authpage shown
+var tries = 0;
+var serverStatus = '';
+function InitBankomat() {
+    if (IsBankOnline() == false) {
+        if (tries < 10) {
+            setTimeout(function () {
+                tries++;
+                InitBankomat();
+            }, 500);
+        }
+        else {
+            ResultNote.text(":( PirBankomat je smutný");
+            changeText(IdentityName, "PirBankomat - offline");
+            switchPage(LoadingError, "redLight", 1);
+        }
+    }
+    else {
+        $("body").focus();
+        changeText(IdentityName, "PirBankomat - " + window.serverStatus["name"]);
+        switchPage(AuthScreen, "white", 1);
+        //tries = 0;
+    }
+}
+
+function IsBankOnline() {
+    showElem(LoadingScreen);
+    serverStatus = GetServerStatus();
+
+    if (serverStatus["version"] == null || serverStatus["version"] == '') {
+        console.log("Server offline");
+        return false;
+    }
+    else {
+        console.log("Server online");
+        return true;
+    }
+}
 
 
+// Method to switch page
+function switchPage(to, color, isOnline) {
+    if (isOnline || to==LoadingError) {
+        showElem(LoadingScreen).delay(1000).queue(function () {
+            Screens.hide();
+            changeStatus(color);
+            to.show();
+            hideElem(LoadingScreen);
+            LoadingScreen.dequeue();
+        });
+    }
+    else {
+        ResultNote.text(":( PirBankomat je smutný");
+        changeText(IdentityName, "PirBankomat - offline");
+        switchPage(LoadingError, "redLight", 1);
+    }
+}

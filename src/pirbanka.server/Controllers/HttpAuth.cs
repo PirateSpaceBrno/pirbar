@@ -18,7 +18,7 @@ namespace PirBanka.Server.Controllers
             if (auth != null)
             {
                 var authentication = Server.db.Get<Authentication>(DatabaseHelper.Tables.authentications, $"content='{TextHelper.SHA512(auth.Password)}'");
-                var authLevel = GetAuthLevel(auth, authentication, identityId, accountId);
+                var authLevel = GetAuthLevel(authentication, identityId, accountId);
 
                 // Compare minimal access level with authetication access level
                 if (authLevel >= minAccessLevel)
@@ -69,7 +69,7 @@ namespace PirBanka.Server.Controllers
             return null;
         }
 
-        private static AccessLevel GetAuthLevel(NetworkCredential auth, Authentication authentication, int identityId = 0, int accountId = 0)
+        private static AccessLevel GetAuthLevel(Authentication authentication, int identityId = 0, int accountId = 0)
         {
             if (authentication != null)
             {
@@ -100,54 +100,28 @@ namespace PirBanka.Server.Controllers
                 }
 
                 // Check authentication level
-                switch (auth.Domain)
+                var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id='{authentication.identity}'");
+                if (authentication.account == null)
                 {
-                    // Credentials can be for Identity or Account (in Account case - username is empty)
-                    case "creds":
-                        if (authentication.account == null)
+                    if (identity != null && authentication.identity == identity.id && identity.admin)
+                    {
+                        return AccessLevel.Administrator;
+                    }
+                    else if (identity != null && authentication.identity == identity.id)
+                    {
+                        if (identityId == 0 || (identityId != 0 && identityId == identity.id))
                         {
-                            var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"name='{auth.UserName}'");
-                            if (identity != null && authentication.identity == identity.id && identity.admin)
-                            {
-                                return AccessLevel.Administrator;
-                            }
-                            else if (identity != null && authentication.identity == identity.id)
-                            {
-                                if (identityId == 0 || (identityId != 0 && identityId == identity.id))
-                                {
-                                    return AccessLevel.Identity;
-                                }
-                            }
+                            return AccessLevel.Identity;
                         }
-                        else
-                        {
-                            var account = Server.db.Get<Account>(DatabaseHelper.Tables.accounts, $"id={authentication.account}");
-                            if (accountId == 0 || (accountId != 0 && accountId == account.id))
-                            {
-                                return AccessLevel.Account;
-                            }
-                        }
-                        break;
-
-                    // Token is for identity only
-                    case "token":
-                        if (authentication.account == null)
-                        {
-                            var identity = Server.db.Get<Identity>(DatabaseHelper.Tables.identities, $"id='{authentication.identity}'");
-                            if (identity != null && identity.admin)
-                            {
-                                return AccessLevel.Administrator;
-                            }
-                            else if (identity != null)
-                            {
-                                if (identityId == 0 || (identityId != 0 && identityId == authentication.identity))
-                                {
-                                    return AccessLevel.Identity;
-                                }
-                            }
-
-                        }
-                        break;
+                    }
+                }
+                else
+                {
+                    var account = Server.db.Get<Account>(DatabaseHelper.Tables.accounts, $"id={authentication.account}");
+                    if (accountId == 0 || (accountId != 0 && accountId == account.id))
+                    {
+                        return AccessLevel.Account;
+                    }
                 }
             }
 

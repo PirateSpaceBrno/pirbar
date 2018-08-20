@@ -5,9 +5,7 @@ keyDownHandler = function keyDownHandler(e) {
 
     //expireSession();
 
-    if (window.catchToken == true) {
-        var token = window.token;
-
+    if (CatchToken == true) {
         // keyboardCharMap is an array of arrays, with each inner
         // array having 2 columns - un-shifted, and shifted values.
         // iCol = 0 is the un-shifted value, while iCol=1 is the shifted value.
@@ -25,17 +23,17 @@ keyDownHandler = function keyDownHandler(e) {
 
         if (e.keyCode == 13) {
             //alert(token.val());
-            IdentifyAuth(token.val());
-            token.val('');
+            IdentifyAuth(Token.val());
+            Token.val('');
         }
         else if (e.keyCode == 8) {
-            if (!token.is(":focus"))
-                token.val(token.val().slice(0, -1));
+            if (!Token.is(":focus"))
+                Token.val(Token.val().slice(0, -1));
         }
         else if (ch === "") { }
         else {
-            if (!token.is(":focus")) {
-                token.val(token.val() + ch);
+            if (!Token.is(":focus")) {
+                Token.val(Token.val() + ch);
             }
         }
     }

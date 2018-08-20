@@ -25,7 +25,12 @@ body {
     font-weight: 300;
 }
 
-div[class*='screenButton'] {
+div.screen {
+    display: none;
+    position: relative;
+}
+
+div.screen div[class*='screenButton'] {
     width: 600px;
     margin: auto;
     position: relative;
@@ -39,10 +44,20 @@ div[class*='screenButton'] {
     transition: background linear .5s;
 }
 
-div[class*='screenButton'] img.icon {
+div.screen div[class*='screenButton'] img.icon {
     height: 70px;
     line-height: 3em;
     float: left;
+}
+
+
+div.screen div[class*='staticContent'] {
+    width: 600px;
+    margin: auto;
+    position: relative;
+    padding: 40px 60px 40px 60px;
+    font-size: 1.4em;
+    color: var(--white);
 }
 
 #header {
@@ -97,11 +112,6 @@ div[class*='screenButton'] img.icon {
     top: 20px;
 }
 
-#authPage, #kioskPage {
-    position: relative;
-    display: none;
-}
-
 #resultNote {
     position: absolute;
     top: 100px;
@@ -133,9 +143,6 @@ div[class*='screenButton'] img.icon {
     position: relative;
 }
 
-#loadingError {
-    display: none;
-}
 
 #loadingError .screenButton {
     top: 200px;
@@ -147,19 +154,9 @@ div[class*='screenButton'] img.icon {
 }
 
 #authPage div.authenticate div.init {
-    width: 600px;
-    height: 80px;
-    margin: auto;
-    position: relative;
     top: 150px;
-    padding: 40px 60px 40px 60px;
-    font-size: 3.5em;
-    color: var(--white);
     background: var(--blueDark);
-    text-align: right;
-    cursor: pointer;
     z-index: 100;
-    transition: background linear .5s;
 }
 
 
@@ -208,7 +205,8 @@ div[class*='screenButton'] img.icon {
     color: var(--blueDark);
 }
 
-#authPage div.pass a.cancel, #authPage div.pass a.ok {
+#authPage div.pass div.cancel, #authPage div.pass div.ok {
+    display: inline-block;
     width: 80px;
     height: 20px;
     float: right;
@@ -219,60 +217,73 @@ div[class*='screenButton'] img.icon {
     font-size: 1em;
     color: var(--white);
     text-align: center;
+
+    cursor: pointer;
 }
 
-#authPage div.pass a.cancel {
+#authPage div.pass div.cancel {
     background: var(--redDark);
     transition: background linear .5s;
 }
 
-#authPage div.pass a.cancel:hover {
+#authPage div.pass div.cancel:hover {
     background: var(--redLight);
     transition: background linear .5s;
 }
 
-#authPage div.pass a.ok {
+#authPage div.pass div.ok {
     background: var(--greenDark);
     transition: background linear .5s;
 }
 
-#authPage div.pass a.ok:hover {
+#authPage div.pass div.ok:hover {
     background: var(--greenLight);
     transition: background linear .5s;
 }
 
 #authPage div.kiosk {
-    width: 600px;
-    margin: auto;
-    position: relative;
     top: 300px;
-    padding: 40px 60px 40px 60px;
-    font-size: 3.5em;
-    color: var(--white);
     background: var(--purpleDark);
-    text-align: right;
-    cursor: pointer;
-    transition: background linear .5s;
 }
 
 
 #authPage div.kiosk:hover {
     background: var(--purpleLight);
-    transition: background linear .5s;
 }
 
 #authPage div.kiosk .icon {
     height: 80px;
-    line-height: 3em;
-    float: left;
 }
 
 #jq-keyboard {
     z-index: 9000;
 }
 
-#kioskScreen {
-    visibility: hidden;
-    opacity: 0;
+#kioskScreen div.showStats {
+    margin-top: 120px;
+    background: var(--purpleDark);
+}
 
+#kioskScreen div.showStats:hover {
+    background: var(--purpleLight);
+}
+
+#kioskScreen div.close, #bankStats div.close {
+    margin-top: 60px;
+    background: var(--orange);
+}
+
+#kioskScreen div.close:hover, #bankStats div.close:hover {
+    background: var(--yellow);
+}
+
+#bankStats div.staticContent {
+    background: var(--white);
+    color: var(--blueDark);
+}
+
+
+
+.bold {
+    font-weight: 600;
 }

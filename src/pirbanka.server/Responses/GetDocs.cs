@@ -452,7 +452,7 @@ namespace PirBanka.Server.Responses
                 new Action<Request, Response>( async (req, res) =>
                 {
                     int id = TextHelper.GetUriIds(req.Endpoint,@"^/doc/identities/(\d+)/markets/(\d+)/authentications$")[1];
-                    int marketId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)/authentications/(\d+)$")[2];
+                    int marketId = TextHelper.GetUriIds(req.Endpoint, @"^/doc/identities/(\d+)/markets/(\d+)/authentications$")[2];
 
                     string newContent = "<div>";
                     newContent += $"<h2>Create Authentication for Market {id}</h2>";
@@ -664,6 +664,19 @@ namespace PirBanka.Server.Responses
                 new Action<Request, Response>( async (req, res) =>
                 {
                     res.Content = JsonHelper.SerializeObject(new Token() {authentications_id=1,token="TOKEN value"});
+                    res.ContentType = ContentTypes.Json;
+                    await res.SendAsync();
+                }
+            )},
+            {
+                @"^/doc/models/identify$",
+                new Action<Request, Response>( async (req, res) =>
+                {
+                    res.Content = JsonHelper.SerializeObject(
+                        new Identify() {
+                            account = new AccountView() { account_identifier = "10001/1", balance = 2, currency_id = 1, id = 1, identity = 1},
+                            identity = new Identity() { name = "Identity", display_name="Display name", id = 1}
+                        });
                     res.ContentType = ContentTypes.Json;
                     await res.SendAsync();
                 }

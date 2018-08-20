@@ -1,7 +1,5 @@
 ﻿var idleTimer;
 var firstRun = true;
-window.token = Token;
-window.catchToken = true;
 
 function expireSession() {
     clearTimeout(idleTimer);

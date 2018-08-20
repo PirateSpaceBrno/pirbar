@@ -36,7 +36,7 @@
                 <div class="circle"></div>
             </div>
         </div>
-        <div id="identityName">PirBankomat - offline</div>
+        <div id="identityName">PirBankomat</div>
         <div id="clock"></div>
         <div id="clockNote"></div>
         <img src="images/pirbankomat.svg" alt="logo" id="logo" />
@@ -59,7 +59,7 @@
         </div>
     </div>
     <div id="loadingClearing"></div>
-    <div id="loadingError">
+    <div id="loadingError" class="screen">
         <div class="screenButton">
             <img src="images/reload.svg" alt="" class="icon" />
 
@@ -68,15 +68,15 @@
     </div>
 
     <div id="resultNote">
-        
+
     </div>
 
     <div id="footer"></div>
 
     <!-- Main page -->
-    <div id="authPage">
+    <div id="authPage" class="screen">
         <div class="authenticate">
-            <div class="init" onclick="$('#authPage div.pass').css('top', '150px'); $('#token').val(''); showVirtKeyboard(); $('#token').focus(); expireSession();">
+            <div class="init screenButton" onclick="authShowPasswordInput();">
                 <img src="images/secure.svg" alt="" class="icon" />
 
                 <div class="title">Autorizovaný přístup</div>
@@ -85,29 +85,49 @@
 
             <div class="pass">
                 <input type="password" id="token" />
-                <a href="#" class="cancel" onclick="$('#authPage div.pass').css('top', '110px'); $('#token').val(''); $('body').focus(); hideVirtKeyboard();">Zrušit</a>
-                <a href="#" class="ok" onclick="IdentifyAuth(Token.val());">Přihlásit</a>
+                <div class="cancel" onclick="authHidePasswordInput();">Zrušit</div>
+                <div class="ok" onclick="IdentifyAuth(Token.val());">Přihlásit</div>
             </div>
         </div>
 
 
-        <div class="kiosk" onclick="switchPage(AuthScreen, KioskScreen, 'purpleLight');">
+        <div class="kiosk screenButton" onclick="changeText(IdentityName, IdentityName.text(), 'purpleLight'); switchPage(KioskScreen, 'purpleLight', IsBankOnline());">
             <img src="images/kiosk.svg" alt="" class="icon" />
             <div class="title">Veřejný přístup</div>
         </div>
     </div>
 
     <!-- Public kiosk mode -->
-    <div id="kioskScreen">
-        <div class="">
-            <img src="images/secure.svg" alt="" class="icon" />
+    <div id="kioskScreen" class="screen">
+        <div class="screenButton showStats" onclick="ShowStatsScreen();">
+            <img src="images/reload.svg" alt="" class="icon" />
 
-            <div class="title">Autorizovaný přístup</div>
-            <div class="help">Autorizuj se přiložením karty nebo pomocí hesla</div>
+            <div class="title">Zobrazit statistiky</div>
+        </div>
+
+        <div class="screenButton close" onclick="location.reload();">
+            <img src="images/reload.svg" alt="" class="icon" />
+
+            <div class="title">Do hlavní nabídky</div>
         </div>
     </div>
 
-    
+    <div id="bankStats" class="screen">
+        <div class="staticContent">
+            <div id="bankVersion"></div>
+            <div id="identitiesCount"></div>
+            <div id="accountsCount"></div>
+            <div id="marketsCount"></div>
+        </div>
+
+        <div class="screenButton close" onclick="switchPage(KioskScreen, 'purpleLight', IsBankOnline());">
+            <img src="images/reload.svg" alt="" class="icon" />
+
+            <div class="title">Vrátit se zpátky</div>
+        </div>
+    </div>
+
+
     <!-- Load PirBanka methods -->
     <script type="text/javascript" src="scripts/pirbanka.elements.js"></script>
     <script type="text/javascript" src="scripts/pirbanka.helpers.js"></script>
