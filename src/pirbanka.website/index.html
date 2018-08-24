@@ -17,30 +17,106 @@
 
     <link href="style.css" rel="stylesheet" type="text/css" media="screen,projection" />
     <link href="images/pirbanka_icon.svg" rel="icon" />
+
+    <script type="text/javascript" src="scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui-1.11.4.min.js"></script>
+    <script type="text/javascript">
+        function showElem(elem) {
+            return elem.css('visibility', 'visible').css('opacity', '1');
+        }
+
+        function hideElem(elem) {
+            elem.css("transition", "visibility 0.5s, opacity 0.5s linear");
+            elem.css('opacity', '0').css('visibility', 'hidden').delay(500).queue(function () {
+                elem.css("transition", "visibility 0s, opacity 0.5s linear");
+                elem.dequeue();
+            });
+            return elem;
+        }
+
+        function showScreen(elem) {
+            hideElem($('.content'));
+
+            if (elem.css('opacity') == '0') {
+                showElem(elem);
+            }
+            else {
+                hideElem(elem);
+                showElem($('#mainContent'));
+            }
+        }
+    </script>
 </head>
 
-<body onload="">
+<body onload="showScreen($('#mainContent'))">
     <div id="bg"></div>
     <div id="bgOverlay"></div>
 
     <div id="header">
         <img src="images/pirbanka.svg" />
+
+        <div class="right">
+            <a href="#" onclick="showScreen($('#certContent'))" class="button" id="cert">
+                Certifikační autorita
+            </a>
+
+            <a href="#" onclick="showScreen($('#appContent'))" class="button" id="bankomat">
+                Online aplikace
+            </a>
+
+            <a href="https://api.pirbanka.psb/" target="_blank" class="button" id="api">
+                REST API rozhraní
+            </a>
+        </div>
+        <div class="clear"></div>
     </div>
 
-    <a href="pirbankaCA.pem" class="button" id="cert">
-        Stáhnout klíč certifikační autority
-    </a>
+    <div class="content" id="mainContent">
+        <h1>PirBanka</h1>
+        <p>
+            PirBanka je systém pro mikroplatby uvnitř komunity.<br />
+            Umožňuje zakládat identity a účty k nim, držet vložené prostředky, investovat je a zprostředkovat bezhotovostní styk mezi uživateli.<br />
+            <br />
+            Začni vytvořením své identity pomocí některé z aplikací.
+        </p>
+    </div>
 
-    <a href="https://bankomat.pirbanka.psb/" class="button" id="bankomat">
-        Aplikace Bankomat
-    </a>
+    <div class="content" id="certContent">
+        <h1>Certifikační autorita</h1>
+        <p>
+            PirBanka šifruje API rozhraní a publikované klientské aplikace pomocí SSL certifikátů vydaných vlastní certifikační autoritou.<br />
+            Pro správnou funkčnost služeb si přidej do svého prohlížeče náš certifikát mezi ostatní autority. Poté bude připojení považováno za zabezpečené.<br />
+            <a href="pirbankaCA.pem" class="button" id="cert">
+                Stáhnout klíč CA
+            </a>
+        </p>
+        <div class="clear"></div>
+    </div>
 
-    <a href="https://ib24.pirbanka.psb/" class="button" id="ib24">
-        Internetové bankovnictví
-    </a>
+    <div class="content" id="appContent">
+        <h1>Online aplikace</h1>
+        <p>Před použitím aplikací si prosím přečti pasáž "Certifikační autorita".</p>
+        <h2>Bankomat</h2>
+        <p>
+            Aplikace bankomat je kioskový online přístup k vybraným službám.<br />
+            Lze dobíjet kredit, přenést prostředky na jiný účet, nakupovat z marketů, prohlížet statistiky banky nebo zakládat nové identity.<br />
+            <a href="https://bankomat.pirbanka.psb/" target="_blank" class="button" id="bankomat">
+                Otevřít bankomat
+            </a>
+        </p>
+        <div class="clear"></div>
 
-    <a href="https://api.pirbanka.psb/" class="button" id="api">
-        REST API rozhraní
-    </a>
+        <h2>Internetové bankovnictví</h2>
+        <p>
+            Internetové bankovnictví je online aplikace na správu identit a účtů k nim přidruženým.<br />
+            Lze například přidávat přístupové klíče, vytvářet nové účty a markety, prodávat či nakupovat z marketů, zadávat platby na jiný účet, prohlížet rozšířené statistiky banky, atd.<br />
+            <a href="https://ib24.pirbanka.psb/" class="button" id="ib24">
+                Navštívit aplikaci
+            </a>
+
+        </p>
+        <div class="clear"></div>
+    </div>
+
 </body>
 </html>
