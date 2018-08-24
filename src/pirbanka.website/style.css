@@ -1,0 +1,191 @@
+﻿@font-face {
+    font-family: "Source Sans Pro";
+    font-weight: 300;
+    src: url(fonts/SourceSansPro-Light.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Source Sans Pro";
+    font-weight: 600;
+    src: url(fonts/SourceSansPro-SemiBold.ttf) format('truetype');
+}
+
+:root {
+    --greenDark: #27ae60;
+    --greenLight: #2ecc71;
+    --blueDark: #2980b9;
+    --blueLight: #3498db;
+    --redDark: #c0392b;
+    --redLight: #e74c3c;
+    --grayDark: #2c3e50;
+    --grayLight: #7f8c8d;
+    --purpleDark: #8e44ad;
+    --purpleLight: #9b59b6;
+    --white: #ffffff;
+    --yellow: #f1c40f;
+    --orange: #f39c12;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background: var(--grayDark);
+    color: var(--white);
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+    height: 100%;
+}
+
+
+#header {
+    background: var(--white);
+    padding: 10px;
+    z-index: 10;
+    height: 40px;
+}
+
+#bg {
+    -moz-animation: bg 60s linear infinite;
+    -webkit-animation: bg 60s linear infinite;
+    -ms-animation: bg 60s linear infinite;
+    animation: bg 60s linear infinite;
+    -moz-backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -moz-transform: translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
+    -ms-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+    /* Set your background with this */
+    background: #348cb2 url("images/bg.jpg") top left;
+    background-repeat: repeat;
+    height: 100%;
+    left: 0;
+    opacity: 1;
+    position: fixed;
+    top: 60px;
+    background-size: 2250px auto;
+    width: 6750px;
+    z-index: 1;
+}
+
+#bgOverlay {
+    position: fixed;
+    top: 60px;
+    width: 100%;
+    height: 100%;
+    background: rgba(44, 62, 80, 0.8);
+    z-index: 2;
+}
+
+a.button {
+    display: block;
+    width: 300px;
+    height: 60px;
+    line-height: 60px;
+    padding: 10px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    z-index: 2;
+    position: fixed;
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
+    left: 50%;
+    margin-left: -160px;
+    text-align: center;
+    transition: all .5s linear;
+}
+
+#cert {
+    background: var(--greenDark);
+    top: 100px;
+}
+
+#cert:hover {
+    background: var(--greenLight);
+}
+
+#bankomat {
+    background: var(--blueDark);
+    top: 260px;
+}
+
+#ib24 {
+    background: var(--blueDark);
+    top: 420px;
+}
+
+#bankomat:hover, #ib24:hover {
+    background: var(--blueLight);
+}
+
+@-moz-keyframes bg {
+    0% {
+        -moz-transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+    }
+
+    100% {
+        -moz-transform: translate3d(-2250px,0,0);
+        -webkit-transform: translate3d(-2250px,0,0);
+        -ms-transform: translate3d(-2250px,0,0);
+        transform: translate3d(-2250px,0,0);
+    }
+}
+
+@-webkit-keyframes bg {
+    0% {
+        -moz-transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+    }
+
+    100% {
+        -moz-transform: translate3d(-2250px,0,0);
+        -webkit-transform: translate3d(-2250px,0,0);
+        -ms-transform: translate3d(-2250px,0,0);
+        transform: translate3d(-2250px,0,0);
+    }
+}
+
+@-ms-keyframes bg {
+    0% {
+        -moz-transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+    }
+
+    100% {
+        -moz-transform: translate3d(-2250px,0,0);
+        -webkit-transform: translate3d(-2250px,0,0);
+        -ms-transform: translate3d(-2250px,0,0);
+        transform: translate3d(-2250px,0,0);
+    }
+}
+
+@keyframes bg {
+    0% {
+        -moz-transform: translate3d(0,0,0);
+        -webkit-transform: translate3d(0,0,0);
+        -ms-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+    }
+
+    100% {
+        -moz-transform: translate3d(-2250px,0,0);
+        -webkit-transform: translate3d(-2250px,0,0);
+        -ms-transform: translate3d(-2250px,0,0);
+        transform: translate3d(-2250px,0,0);
+    }
+}
+

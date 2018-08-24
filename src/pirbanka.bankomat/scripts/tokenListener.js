@@ -1,11 +1,7 @@
 ﻿// This catches keys from a physical keyboard, a soft keyboard on a tablet, or a
 // scanner attached via USB
 keyDownHandler = function keyDownHandler(e) {
-    //$('*').bind("keydown", function (e) {
-
-    //expireSession();
-
-    if (CatchToken == true) {
+    if (window.CatchToken == true) {
         // keyboardCharMap is an array of arrays, with each inner
         // array having 2 columns - un-shifted, and shifted values.
         // iCol = 0 is the un-shifted value, while iCol=1 is the shifted value.
@@ -23,23 +19,21 @@ keyDownHandler = function keyDownHandler(e) {
 
         if (e.keyCode == 13) {
             //alert(token.val());
-            IdentifyAuth(Token.val());
-            Token.val('');
+            window.CatchTokenFunc();
+            window.CatchTokenTo.val('');
         }
         else if (e.keyCode == 8) {
-            if (!Token.is(":focus"))
-                Token.val(Token.val().slice(0, -1));
+            if (!window.CatchTokenTo.is(":focus"))
+                window.CatchTokenTo.val(window.CatchTokenTo.val().slice(0, -1));
         }
         else if (ch === "") { }
         else {
-            if (!Token.is(":focus")) {
-                Token.val(Token.val() + ch);
+            if (!window.CatchTokenTo.is(":focus")) {
+                window.CatchTokenTo.val(window.CatchTokenTo.val() + ch);
             }
         }
     }
-//});
 }
-//document.onkeydown = keyDownHandler;
 
 // names of known key codes (0-255)
 var keyboardNameMap = [

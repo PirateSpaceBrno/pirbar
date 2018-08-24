@@ -23,9 +23,9 @@ $(document).on({
     'click': function (e) {
         expireSession();
     },
-    'scroll': function (e) {
-        expireSession();
-    },
+    //'scroll': function (e) {
+    //    expireSession();
+    //},
     'keydown': function (e) {
         keyDownHandler(e);
         expireSession();

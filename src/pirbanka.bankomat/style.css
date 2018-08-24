@@ -1,4 +1,14 @@
-﻿@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,600&subset=latin-ext');
+﻿@font-face {
+    font-family: "Source Sans Pro";
+    font-weight: 300;
+    src: url(fonts/SourceSansPro-Light.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Source Sans Pro";
+    font-weight: 600;
+    src: url(fonts/SourceSansPro-SemiBold.ttf) format('truetype');
+}
 
 :root {
     --greenDark: #27ae60;
@@ -153,6 +163,43 @@ div.screen div[class*='staticContent'] {
     background: var(--yellow);
 }
 
+#tokenListenScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--grayDark);
+    z-index: 900;
+    transition: visibility 0s, opacity 0.5s linear;
+    visibility: hidden;
+    opacity: 0;
+    text-align: center;
+    color: var(--greenLight);
+}
+
+#tokenListenScreen img.icon {
+    height: 100px;
+    margin-top: 300px;
+    margin-bottom: 20px;
+}
+
+#tokenListenScreen div.close {
+    margin: auto;
+    margin-top: 20px;
+    width: 100px;
+    padding: 5px;
+    /*background: var(--redDark);*/
+    cursor: pointer;
+    color: var(--white);
+    transition: all 0.5s linear;
+}
+
+#tokenListenScreen div.close:hover {
+    background: var(--redLight);
+    transition: all 0.5s linear;
+}
+
 #authPage div.authenticate div.init {
     top: 150px;
     background: var(--blueDark);
@@ -180,7 +227,7 @@ div.screen div[class*='staticContent'] {
     padding-top: 5px;
 }
 
-#authPage div.pass {
+div.screen div.pass {
     width: 720px;
     margin: auto;
     position: relative;
@@ -192,7 +239,19 @@ div.screen div[class*='staticContent'] {
     z-index: 99;
 }
 
-#authPage div.pass input[type=password] {
+div.screen div.pass input[type=text] {
+    width: 700px;
+    height: 20px;
+    resize: none;
+    font-size: 1em;
+    padding: 10px;
+    border: none;
+    /*background: rgba(0, 0, 0, 0);*/
+    background: var(--white);
+    color: var(--blueDark);
+}
+
+div.screen div.pass input[type=password] {
     width: 500px;
     height: 20px;
     resize: none;
@@ -205,7 +264,28 @@ div.screen div[class*='staticContent'] {
     color: var(--blueDark);
 }
 
-#authPage div.pass div.cancel, #authPage div.pass div.ok {
+div.screen div.pass img.grabToken {
+    height: 20px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0.5;
+    transition: all ease-in-out .5s;
+    cursor: pointer;
+}
+
+div.screen div.pass img.grabToken:hover {
+    opacity: 1;
+    transition: all ease-in-out .5s;
+}
+
+
+div.screen div.tokenField {
+    float: left;
+    position: relative;
+}
+
+div.screen div.pass div.cancel,div.screen  div.pass div.ok {
     display: inline-block;
     width: 80px;
     height: 20px;
@@ -221,22 +301,22 @@ div.screen div[class*='staticContent'] {
     cursor: pointer;
 }
 
-#authPage div.pass div.cancel {
+div.screen div.pass div.cancel {
     background: var(--redDark);
     transition: background linear .5s;
 }
 
-#authPage div.pass div.cancel:hover {
+div.screen div.pass div.cancel:hover {
     background: var(--redLight);
     transition: background linear .5s;
 }
 
-#authPage div.pass div.ok {
+div.screen div.pass div.ok {
     background: var(--greenDark);
     transition: background linear .5s;
 }
 
-#authPage div.pass div.ok:hover {
+div.screen div.pass div.ok:hover {
     background: var(--greenLight);
     transition: background linear .5s;
 }
@@ -245,7 +325,6 @@ div.screen div[class*='staticContent'] {
     top: 300px;
     background: var(--purpleDark);
 }
-
 
 #authPage div.kiosk:hover {
     background: var(--purpleLight);
@@ -260,7 +339,7 @@ div.screen div[class*='staticContent'] {
 }
 
 #kioskScreen div.showStats {
-    margin-top: 120px;
+    margin-top: 60px;
     background: var(--purpleDark);
 }
 
@@ -268,22 +347,62 @@ div.screen div[class*='staticContent'] {
     background: var(--purpleLight);
 }
 
-#kioskScreen div.close, #bankStats div.close {
+#kioskScreen div.userMgm, #userMgmScreen div.addUser {
+    margin-top: 60px;
+    background: var(--purpleDark);
+}
+
+#kioskScreen div.userMgm:hover, #userMgmScreen div.addUser:hover {
+    background: var(--purpleLight);
+}
+
+div.screen div.close {
     margin-top: 60px;
     background: var(--orange);
+    transition: all ease-in-out .5s;
 }
 
-#kioskScreen div.close:hover, #bankStats div.close:hover {
+div.screen div.close:hover {
     background: var(--yellow);
+    transition: all ease-in-out .5s;
 }
 
-#bankStats div.staticContent {
+div.screen div.staticContent {
     background: var(--white);
     color: var(--blueDark);
+    margin-top: 60px;
 }
 
+#bankBalances {
+    margin-top: 20px;
+}
 
+#userMgmScreen div.addUser {
+    z-index: 100;
+}
+
+#userMgmScreen div.pass {
+    top: -80px;
+    transition: all ease-in-out .5s;
+    z-index: 99;
+}
+
+#userMgmScreen div.pass div.ok {
+    width: 180px
+}
+
+#userMgmScreen div.close {
+    margin-top: 20px;
+}
 
 .bold {
     font-weight: 600;
+}
+
+.isAdmin {
+    color: var(--redLight);
+}
+
+.isBank {
+    color: var(--purpleLight);
 }

@@ -37,6 +37,17 @@ function hideElem(elem) {
     return elem;
 }
 
+function addUserHideShowInputs() {
+    if ($('#userMgmScreen div.pass').css('top') == '0px') {
+        $('#userMgmScreen div.close').css('margin-top', '20px');
+        $('#userMgmScreen div.pass').css('top', '-80px');
+    }
+    else {
+        $('#userMgmScreen div.close').css('margin-top', '100px');
+        $('#userMgmScreen div.pass').css('top', '0px');
+    }
+}
+
 
 // 
 function changeStatus(color, delay = 0) {
@@ -59,14 +70,14 @@ function changeStatus(color, delay = 0) {
 }
 
 function changeText(elem, text, color='') {
-    elem.delay(450).fadeOut(function () {
+    elem.delay(200).fadeOut(function () {
         if (color != '') {
             $(this).css("color", "var(--" + color + ")");
         }
         else {
             $(this).css("color", "var(--white)");
         }
-        $(this).text(text).fadeIn(500);
+        $(this).text(text).fadeIn(200);
     });
 }
 
@@ -88,6 +99,7 @@ function authHidePasswordInput() {
 var tries = 0;
 var serverStatus = '';
 function InitBankomat() {
+
     if (IsBankOnline() == false) {
         if (tries < 10) {
             setTimeout(function () {
@@ -97,15 +109,14 @@ function InitBankomat() {
         }
         else {
             ResultNote.text(":( PirBankomat je smutný");
-            changeText(IdentityName, "PirBankomat - offline");
-            switchPage(LoadingError, "redLight", 1);
+            changeText(IdentityName, "Offline");
+            switchPage(LoadingError, "redLight");
         }
     }
     else {
         $("body").focus();
-        changeText(IdentityName, "PirBankomat - " + window.serverStatus["name"]);
-        switchPage(AuthScreen, "white", 1);
-        //tries = 0;
+        changeText(IdentityName, window.serverStatus["name"]);
+        switchPage(AuthScreen, "white");
     }
 }
 
@@ -113,7 +124,7 @@ function IsBankOnline() {
     showElem(LoadingScreen);
     serverStatus = GetServerStatus();
 
-    if (serverStatus["version"] == null || serverStatus["version"] == '') {
+    if (!serverStatus.hasOwnProperty("version")) {
         console.log("Server offline");
         return false;
     }
@@ -125,19 +136,32 @@ function IsBankOnline() {
 
 
 // Method to switch page
-function switchPage(to, color, isOnline) {
-    if (isOnline || to==LoadingError) {
-        showElem(LoadingScreen).delay(1000).queue(function () {
-            Screens.hide();
-            changeStatus(color);
-            to.show();
-            hideElem(LoadingScreen);
-            LoadingScreen.dequeue();
-        });
+function switchPage(to, color) {
+    hideVirtKeyboard();
+
+    showElem(LoadingScreen).delay(100).queue(function () {
+        Screens.hide();
+        changeStatus(color);
+        to.show();
+        hideElem(LoadingScreen);
+        LoadingScreen.dequeue();
+    });
+}
+
+function StartListenForToken(tokenInput) {
+    window.CatchToken = true;
+    window.CatchTokenTo = tokenInput;
+    window.CatchTokenTo.val('');
+    window.CatchTokenFunc = StopListenForToken;
+    showElem(TokenListenScreen);
+}
+
+function StopListenForToken(canc = false) {
+    window.CatchToken = false;
+    if (canc == true) {
+        window.CatchTokenTo.val('');
     }
-    else {
-        ResultNote.text(":( PirBankomat je smutný");
-        changeText(IdentityName, "PirBankomat - offline");
-        switchPage(LoadingError, "redLight", 1);
-    }
+    window.CatchTokenTo = null;
+    window.CatchTokenFunc = function () { };
+    hideElem(TokenListenScreen);
 }

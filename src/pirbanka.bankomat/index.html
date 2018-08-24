@@ -67,6 +67,15 @@
         </div>
     </div>
 
+    <div id="tokenListenScreen">
+        <div class="screenButton">
+            <img src="images/secure.svg" alt="" class="icon" />
+
+            <div class="title bold">Přilož kartu</div>
+            <div class="close" onclick="StopListenForToken(true);">Zrušit</div>
+        </div>
+    </div>
+
     <div id="resultNote">
 
     </div>
@@ -84,14 +93,14 @@
             </div>
 
             <div class="pass">
-                <input type="password" id="token" />
+                <input type="password" id="token" placeholder="Heslo" />
                 <div class="cancel" onclick="authHidePasswordInput();">Zrušit</div>
                 <div class="ok" onclick="IdentifyAuth(Token.val());">Přihlásit</div>
             </div>
         </div>
 
 
-        <div class="kiosk screenButton" onclick="changeText(IdentityName, IdentityName.text(), 'purpleLight'); switchPage(KioskScreen, 'purpleLight', IsBankOnline());">
+        <div class="kiosk screenButton" onclick="ShowKioskScreen();">
             <img src="images/kiosk.svg" alt="" class="icon" />
             <div class="title">Veřejný přístup</div>
         </div>
@@ -100,9 +109,15 @@
     <!-- Public kiosk mode -->
     <div id="kioskScreen" class="screen">
         <div class="screenButton showStats" onclick="ShowStatsScreen();">
-            <img src="images/reload.svg" alt="" class="icon" />
+            <img src="images/stats.svg" alt="" class="icon" />
 
             <div class="title">Zobrazit statistiky</div>
+        </div>
+
+        <div class="screenButton userMgm" onclick="ShowUserMgmScreen();">
+            <img src="images/users.svg" alt="" class="icon" />
+
+            <div class="title">Správa identit</div>
         </div>
 
         <div class="screenButton close" onclick="location.reload();">
@@ -118,15 +133,37 @@
             <div id="identitiesCount"></div>
             <div id="accountsCount"></div>
             <div id="marketsCount"></div>
+            <div id="bankBalances"></div>
         </div>
 
-        <div class="screenButton close" onclick="switchPage(KioskScreen, 'purpleLight', IsBankOnline());">
+        <div class="screenButton close" onclick="switchPage(KioskScreen, 'purpleLight');">
             <img src="images/reload.svg" alt="" class="icon" />
 
             <div class="title">Vrátit se zpátky</div>
         </div>
     </div>
 
+    <div id="userMgmScreen" class="screen">
+        <div class="staticContent">
+        </div>
+
+        <div class="screenButton addUser" onclick="addUserHideShowInputs();">
+            <img src="images/adduser.svg" alt="" class="icon" />
+
+            <div class="title">Vytvořit identitu</div>
+        </div>
+        <div class="pass">
+            <input type="text" id="addUserName" placeholder="Jméno identity" />
+            <div class="tokenField"><input type="password" id="addUserToken" placeholder="Heslo nebo token" /><img src="images/secureGray.svg" class="grabToken" onclick="StartListenForToken($('#addUserToken'));" /></div>
+            <div class="ok" onclick="CreateNewIdentity();">Vytvořit identitu</div>
+        </div>
+
+        <div class="screenButton close" onclick="switchPage(KioskScreen, 'purpleLight');">
+            <img src="images/reload.svg" alt="" class="icon" />
+
+            <div class="title">Vrátit se zpátky</div>
+        </div>
+    </div>
 
     <!-- Load PirBanka methods -->
     <script type="text/javascript" src="scripts/pirbanka.elements.js"></script>

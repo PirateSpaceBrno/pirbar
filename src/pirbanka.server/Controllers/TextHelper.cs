@@ -46,9 +46,7 @@ namespace PirBanka.Server.Controllers
             HtmlNode newNode = HtmlNode.CreateNode(content);
             doc.DocumentNode.SelectSingleNode("//body").AppendChild(newNode);
 
-            var buildDate = PirBanka.Server.AssemblyInfo.Date;
-            var buildVersion = new Version(buildDate.Year, buildDate.Month, buildDate.Day, Convert.ToInt32(buildDate.TimeOfDay.TotalSeconds));
-            var version = $"<div id=\"version\">PirBanka - API service | pirbanka.server.{buildVersion}</div>";
+            var version = $"<div id=\"version\">PirBanka - API service | {AssemblyInfo.Version}</div>";
             HtmlNode versionElem = HtmlNode.CreateNode(version);
             doc.DocumentNode.SelectSingleNode("//body").AppendChild(versionElem);
 

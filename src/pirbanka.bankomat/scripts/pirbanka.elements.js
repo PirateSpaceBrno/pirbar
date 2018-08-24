@@ -14,12 +14,21 @@ var IdentityName = $("#identityName");
 var Screens = $("div.screen");
 
 var Stats = $("#bankStats");
+var StatsStatic = $("#bankStats div.staticContent");
 var StatsVersion = $("#bankVersion");
 var StatsIdentitiesCount = $("#identitiesCount");
 var StatsAccountsCount = $("#accountsCount");
 var StatsMarketsCount = $("#marketsCount");
+var StatsBalances = $("#bankBalances");
 
-var CatchToken = true;
+var UserMgmScreen = $("#userMgmScreen");
+var StatsIdentities = $("#userMgmScreen div.staticContent");
+
+var TokenListenScreen = $("#tokenListenScreen");
+
+window.CatchToken = false;
+window.CatchTokenTo = null;
+window.CatchTokenFunc = function () { };
 
 
 // Set loading screen to AJAX

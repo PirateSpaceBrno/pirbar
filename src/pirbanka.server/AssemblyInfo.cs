@@ -58,7 +58,25 @@ namespace PirBanka.Server
             {
                 var buildDate = PirBanka.Server.AssemblyInfo.Date;
                 var buildVersion = new Version(buildDate.Year, buildDate.Month, buildDate.Day, Convert.ToInt32(buildDate.TimeOfDay.TotalSeconds));
-                return $"pirbanka.server.{buildVersion}";
+
+                /*  Codename is based on https://en.wikipedia.org/wiki/List_of_cat_breed
+                * Alphabetically for v1: starts with A, v2: starts with B...
+                * For Hotfixes, subversions etc, use next alphabetical name starting with same letter as major version
+                * -------------
+                * Examples
+                * -------------
+                * v1:
+                *   Abyssinian
+                * v1 HF1:
+                *   Aegean
+                * v2:
+                *   Balinese
+                * etc.
+                */
+                var codename = "abyssinian";
+
+
+                return $"pirbanka.server.{codename}.{buildVersion}";
             }
         }
     }
