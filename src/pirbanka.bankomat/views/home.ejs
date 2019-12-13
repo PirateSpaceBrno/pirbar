@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <% include partials/head %>
+</head>
+
+<body>
+    <% include partials/header %>
+
+    <div id="authPage" class="screen">
+        <div class="authenticate">
+            <div class="init screenButton" onclick="authShowPasswordInput();">
+                <img src="images/secure.svg" alt="" class="icon" />
+
+                <div class="title">Autorizovaný přístup</div>
+                <div class="help">Autorizuj se přiložením karty nebo pomocí hesla</div>
+            </div>
+
+            <div class="pass">
+                <form method="post" action="#" id="loginForm">
+                    <input type="password" id="token" placeholder="Heslo" />
+                    <div class="cancel" onclick="authHidePasswordInput();">Zrušit</div>
+                    <div class="ok" onclick="IdentifyAuth(Token.val());">Přihlásit</div>                    
+                </form>
+            </div>
+        </div>
+
+
+        <div class="kiosk screenButton" onclick="ShowKioskScreen();">
+            <img src="images/kiosk.svg" alt="" class="icon" />
+            <div class="title">Veřejný přístup</div>
+        </div>
+    </div>
+
+    <% include partials/footer %>
+</body>
+</html>

@@ -1,0 +1,57 @@
+﻿<div id="pager">
+    <div id="actHeader">
+        <h1>Zasedání MS Brno 02/2014</h1>
+    </div>
+
+    <div id="actContainer">
+        <div class="actContent">
+            <div class="message" v-for="message in allMessages" v-bind:class="message.type" :key="message.datetime">
+                <span class="datetime">
+                    {{ message.datetime }}
+                </span>
+                <span>
+                    {{ message.text }}
+                </span>
+            </div>
+        </div>
+
+        <div class="actlist">
+            <div class="speakers">
+                <h2>Přihlášení do rozpravy</h2>
+                <ol>
+                    <li><img src="/images/profil.png" />&nbsp;Ondřej Kotas</li>
+                </ol>
+            </div>
+
+            <div class="members">
+                <h2>Účastníci</h2>
+                <div class="member"><img src="" />&nbsp;Jméno Příjmení</div>
+                <div class="member"><img src="/images/profil.png" />&nbsp;Ondřej Kotas</div>
+                <div class="member"><img src="" />&nbsp;Franta Jetel</div>
+                <div class="member"><img src="" />&nbsp;Pepa Jetel</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="participationBox">
+        <div class="actContent">
+
+            <div class="block" id="actParticipation">
+                <a href="# "class="tile" @click.prevent="speakerCall">
+                    <img src="/images/pictograms/microphone.svg" />
+                    <div>Přihlásit se do rozpravy</div>
+                </a>
+
+                <a href="#" class="tile">
+                    <img src="/images/pictograms/facticalnote.svg" />
+                    <div>Faktická poznámka</div>
+                </a>
+
+                <a href="#" class="tile">
+                    <img src="/images/pictograms/technicalnote.svg" />
+                    <div>Technická poznámka</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
